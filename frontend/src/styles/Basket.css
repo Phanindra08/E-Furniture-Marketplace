@@ -1,0 +1,172 @@
+.body-row-info img {
+	width: 12rem;
+	height: 12rem;
+	margin-right: 2rem;
+}
+
+.shopping-cart {
+	width: 125rem;
+	margin: 4rem auto;
+}
+
+.shopping-cart h1 {
+	margin: 4rem 0;
+	font-size: 2.2rem;
+}
+
+.cart-section {
+	font-size: 2rem;
+	width: 100%;
+}
+
+.info-cart {
+	display: flex;
+	flex-direction: column;
+}
+
+.info-cart p {
+	text-align: left;
+}
+.info-cart :nth-child(1) {
+	margin-bottom: 1rem;
+}
+
+.delivery {
+	color: rgb(92, 92, 92);
+	font-size: 1.5rem;
+	margin-top: 1rem;
+}
+.row {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr;
+	grid-column-gap: 10px;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.header-row {
+	border-bottom: 1px solid #000;
+	padding: 2rem 0;
+	background-color: rgb(228, 228, 228);
+}
+
+.body-row-info {
+	display: flex;
+	justify-content: center;
+	align-items: top;
+}
+.body-row {
+	border-bottom: 1px solid #000;
+	padding-bottom: 2rem;
+}
+
+.quantity-container button,
+.quantity-container input {
+	width: 100%;
+}
+
+.quantity-container {
+	display: flex;
+}
+
+.body-row {
+	padding-top: 2rem;
+}
+
+.cart-stars {
+	display: flex;
+	height: 3rem;
+}
+.cart-stars span {
+	color: #ff9529;
+}
+.quantity-container {
+	border: 1px solid rgb(92, 92, 92);
+	padding: 1rem;
+	width: 50%;
+	margin: 0 auto;
+}
+
+.quantity-container button {
+	border: none;
+	outline: none;
+	background-color: transparent;
+	cursor: pointer;
+}
+.empty-basket {
+	font-size: 2rem;
+	background-color: rgb(228, 228, 228);
+	padding: 1rem;
+}
+
+.continue-btn {
+	margin-top: 3rem;
+	color: #fff;
+	padding: 1rem;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	text-decoration: none;
+	border-radius: 5px;
+	background-color: rgb(107, 107, 107);
+}
+
+.empty-container {
+	height: 20rem;
+}
+
+.delivery-container {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-top: 1rem;
+}
+
+.delivery-section {
+	display: flex;
+	font-size: 1.5rem;
+	width: 60%;
+	padding: 2rem 0;
+	justify-content: space-between;
+	border-right: 1px solid #000;
+}
+
+.delivery-price {
+	font-size: 1.8rem;
+	padding-right: 12rem;
+}
+
+.total-section {
+	display: flex;
+	justify-content: space-between;
+	font-size: 2rem;
+	width: 40%;
+	padding: 2rem 0;
+}
+
+.total-section :nth-child(1) {
+	padding-left: 6rem;
+}
+
+.total-section :nth-child(2) {
+	padding-right: 8rem;
+}
+
+.delivery-icon {
+	margin-right: 1rem;
+}
+
+.checkout-btn {
+	text-transform: uppercase;
+	text-decoration: none;
+	background-color: rgb(107, 107, 107);
+	color: #fff;
+	width: 20rem;
+	padding: 1rem;
+	font-size: 1.5rem;
+	float: right;
+	margin-top: 3rem;
+	cursor: pointer;
+	text-align: center;
+}
