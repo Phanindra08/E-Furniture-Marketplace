@@ -6,7 +6,6 @@ import ProductInfo from "./ProductInfo";
 import Modal from "./Modal";
 
 import { StoreContext, StoreActions } from "../store";
-import { getRating, starIcons } from "../utils/utils";
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
 
 const ProductDetails = () => {
@@ -79,8 +78,13 @@ const ProductDetails = () => {
 					src={product.img}
 					alt={product.title}
 					loading="lazy"
+					className="product-image"
 				/>
-				<CarouselImages />
+				<div className="button-container">
+					<button className="make-offer-btn">Make an Offer</button>
+					<button className="make-offer-btn">Edit Product Details</button>
+				</div>
+				{/* <CarouselImages /> */}
 			</div>
 			<div className="productInfo-container">
 				<h2 className="productInfo-title">{product.title}</h2>
@@ -104,7 +108,7 @@ const ProductDetails = () => {
 					<div>{`Product Seller: ${product.seller ? product.seller.username : ''}`}</div>
                 </div>
                 <h3 className="productInfo-price">£{product.price}</h3>
-                <ProductInfo />
+                <ProductInfo description={product.description}/>
                 {product.userId != userId && <div className="productInfo-select">
 					{/* <input
 						type="number"

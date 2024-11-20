@@ -7,13 +7,32 @@
 	width: 140rem;
 	margin: 8rem auto;
 }
+
 .productImg-container {
-	grid-column: 1/2;
-}
-.productImg-container img {
-	width: 72rem;
-	height: 50rem;
-}
+	display: flex;
+	flex-direction: column;  
+	justify-content: center; 
+	width: 700px;  
+	align-items: center;        
+  }
+  
+  .product-image {
+	width: 700px;
+	height: 500px;       
+	object-fit: cover;       
+  }
+  
+  .button-container{
+	display: flex;
+	column-gap: 20px;
+	align-items: center;
+  }
+  .make-offer-btn {
+	margin-top: 10px;        
+	padding: 10px;     
+	cursor: pointer;  
+  }
+  
 .small-images {
 	width: 72rem;
 	margin-top: 2.5rem;
