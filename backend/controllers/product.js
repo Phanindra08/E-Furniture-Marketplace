@@ -6,10 +6,10 @@ import { User } from "../models/user.js";
 
 // get all products=======================================
 export const getAllProducts = async (req, res) => {
-	try {
-		if (Object.keys(req.query).length === 0) {
-			const products = await Product.find();
-			return res.json({ data: products });
+    try {
+        if (Object.keys(req.query).length === 0) {
+            const products = await Product.find().populate('seller');
+            return res.json({ data: products });
 		} else {
 			console.log("else part");
 			// const colors = req.query.color?.split(",") || [];
@@ -74,15 +74,15 @@ export const addProduct = async (req, res) => {
 		const username = await User.findById(req.user.id);
 		// Create a new product instance with the provided data
 		const newProduct = new Product({
-			title,
-			description,
-			price,
-			category,
-			img,
-			location,
-			user: req.user.id,
-			username: username.username
-		});
+            title,
+            description,
+            price,
+            category,
+            img,
+            location,
+            userId: req.user.id,
+            seller: username
+        });
 
 		// Save the new product to the database
 		const savedProduct = await newProduct.save();
@@ -99,14 +99,14 @@ export const addProduct = async (req, res) => {
 
 
 export const getMyProducts = async (req, res) => {
-	try {
-		const userprods = await Product.find({ user: req.user.id });
+    try {
+        const userprods = await Product.find({ userId: req.user.id });
 		return res.json(userprods);
-	} catch (error) {
-		// Handle errors
-		console.error("Detailed error:", error);
-		return res
-			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-			.json({ message: "Error adding product", error: error.message || error });
-	}
+    } catch (error) {
+        // Handle errors
+        console.error("Detailed error:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Error adding product", error: error.message || error });
+    }
 };

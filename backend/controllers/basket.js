@@ -29,22 +29,25 @@ export const addItemsToBasket = async (req, res) => {
 			
 			// check if the item is in the basket already
 			let foundItem = basket.items.find((item) => {
-				return item._id.toString() === productId;
+				return item.productId.toString() === productId;
 			});
 			console.log("foundItem",foundItem)
-			if (foundItem) {
-				// update the quantity of the existing item
-				console.log("found item")
-				foundItem.quantity = Math.max(0, foundItem.quantity + quantity);
+			// if (foundItem) {
+			// 	// update the quantity of the existing item
+			// 	console.log("found item")
+			// 	foundItem.quantity = 1;
 
-				// remove the item if the quantity is zero
-				if (foundItem.quantity === 0) {
-					basket.items = basket.items.filter(
-						(item) => item.productId.toString() !== productId
-					);
-				}
-			} else {
-				// add the new item to the basket
+			// 	// remove the item if the quantity is zero
+			// 	if (foundItem.quantity === 0) {
+			// 		basket.items = basket.items.filter(
+			// 			(item) => item.productId.toString() !== productId
+			// 		);
+			// 	}
+			// } else {
+			// 	// add the new item to the basket
+			// 	basket.items.push({ productId, quantity });
+			// }
+			if(!foundItem){
 				basket.items.push({ productId, quantity });
 			}
 			basket = await basket.save();

@@ -2,7 +2,6 @@ import { useEffect, useContext } from "react";
 
 import CartItem from "../components/CartItem";
 import EmptyBasket from "../components/EmptyBasket";
-import TotalCart from "../components/TotalCart";
 
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config";
 import { StoreContext, StoreActions } from "../store";
@@ -13,11 +12,16 @@ const Basket = () => {
 	const store = useContext(StoreContext);
 	const basketItems = store.state.basketItems;
 
+	const totalPrice = basketItems.reduce((total, item) => {
+        const price = parseFloat(item.productId.price); // Convert price to number
+        const quantity = item.quantity || 1; // Default quantity to 1 if not provided
+        return total + price * quantity; // Add price * quantity to the total
+    }, 0);
+	
 	// get data from db=====================
 	useEffect(() => {
 		const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 
-		console.log("userid",userId)
 
 		if (userId) {
 			const getBasketData = async () => {
@@ -59,6 +63,9 @@ const Basket = () => {
 			<h1>
 				Shopping Cart <span>: {basketItems.length} items</span>
 			</h1>
+			<h1>
+			   TotalPrice <span>: {totalPrice} items</span>
+			</h1>
 			{basketItems.length < 1 ? (
 				<EmptyBasket />
 			) : (
@@ -67,8 +74,8 @@ const Basket = () => {
 						<div className="row header-row">
 							<p className="header">product</p>
 							<p className="header">Unit price</p>
-							<p className="header">Quantity</p>
-							<p className="header">Total</p>
+							{/* <p className="header">Quantity</p> */}
+							<p className="header">Price</p>
 						</div>
 						<div className="cart">
 							{basketItems.map((item, index) => {

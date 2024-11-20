@@ -16,7 +16,6 @@ const ProductDetails = () => {
 	const productId = product._id;
 	
 	const location = useLocation();
-	console.log("product.user != LOCAL_STORAGE.USER_ID ",product.user,LOCAL_STORAGE.USER_ID )
 	const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 	const [showModal, setShowModal] = useState(false);
 	const [submit, setSubmit] = useState(false);
@@ -31,7 +30,7 @@ const ProductDetails = () => {
 		if (submit) {
 			// trigger the POST request
 			const postBasketData = async () => {
-				const quantity = store.state.quantity;
+				const quantity = 1;
 				const res = await fetch(`${APIEndPoints.BASKET}`, {
 					method: "POST",
 					headers: {
@@ -102,12 +101,12 @@ const ProductDetails = () => {
 					>
 						{product.review}Reviews
 					</ScrollLink> */}
-					<div>{`Product Seller: ${store.state.quantity}`}</div>
-				</div>
-				<h3 className="productInfo-price">£{product.price}</h3>
-				<ProductInfo />
-				{product.user != userId && <div className="productInfo-select">
-					<input
+					<div>{`Product Seller: ${product.seller ? product.seller.username : ''}`}</div>
+                </div>
+                <h3 className="productInfo-price">£{product.price}</h3>
+                <ProductInfo />
+                {product.userId != userId && <div className="productInfo-select">
+					{/* <input
 						type="number"
 						name="num"
 						className="num"
@@ -119,9 +118,9 @@ const ProductDetails = () => {
 								payload: e.target.value,
 							})
 						}
-					/>
+					/> */}
 					<button className="add-btn" onClick={addItemToBasketHandler}>
-						Add to basket
+						Add to Wishlist
 					</button>
 				</div>}
 			</div>
