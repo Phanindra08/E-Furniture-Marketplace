@@ -1,12 +1,13 @@
 export const APIEndPoints = {
-	BASKET: "http://localhost:5000/basket/",
-	MAKEOFFER: "http://localhost:5000/makeOffer/",
+	BASKET: "http://localhost:5000/basket",
+	MAKEOFFER: "http://localhost:5000/makeOffer",
 	LOGIN: "http://localhost:5000/user/login",
 	REGISTER: "http://localhost:5000/user/register",
 	SHOP: "http://localhost:5000/products",
-	HOME: "http://localhost:5000/featuredItems/",
-	ADDPRODUCT: "http://localhost:5000/products/addProduct/",
-	MYPRODUCTS: "http://localhost:5000/products/myProducts/"
+	HOME: "http://localhost:5000/featuredItems",
+	ADDPRODUCT: "http://localhost:5000/products/addProduct",
+	UPDATEPRODUCT: "http://localhost:5000/products/updateProduct",
+	MYPRODUCTS: "http://localhost:5000/products/myProducts"
 };
 
 export const PAGE_LINK = {
@@ -17,6 +18,7 @@ export const PAGE_LINK = {
 	CONTACT: "/userDetails",
 	BASKET: "/basket",
 	ADDPRODUCT: "/addProduct",
+	UPDATEPRODUCT: "/updateProduct",
 	USERPRODUCTS: "/myProducts"
 };
 

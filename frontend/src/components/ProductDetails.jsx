@@ -1,8 +1,7 @@
-import { Link as ScrollLink } from "react-scroll";
 import { useContext, useState, useEffect } from "react";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useLocation } from "react-router-dom";
-import CarouselImages from "./CarouselImages";
+import { Link } from "react-router-dom";
+import { PAGE_LINK } from "../utils/config";
 import LoginCheckModal from "./LoginCheckModal.jsx";
 import Snackbar from '@mui/material/Snackbar';
 import ProductInfo from "./ProductInfo";
@@ -18,7 +17,6 @@ const ProductDetails = () => {
 	const user = store.state.user;
 	const productId = product._id;
 	
-	const location = useLocation();
 	const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 	const [showModal, setShowModal] = useState(false);
 	const [showCheckModal, setCheckModal] = useState(false);
@@ -102,7 +100,14 @@ const ProductDetails = () => {
 				/>
 				<div className="button-container">
 					<button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
-					{isLoggedIn && <button className="make-offer-btn">Edit Product Details</button>}
+					{isLoggedIn && product.userId == userId &&
+						<Link 
+							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`} 
+							className="make-offer-btn"
+							state={{ product }}
+							>
+								Edit Product Details
+					</Link>}
 				</div>
 				{/* <CarouselImages /> */}
 			</div>
