@@ -100,7 +100,7 @@ const ProductDetails = () => {
 				/>
 				<div className="button-container">
 					<button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
-					{isLoggedIn && 
+					{isLoggedIn && product.userId == userId &&
 						<Link 
 							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`} 
 							className="make-offer-btn"
@@ -108,7 +108,6 @@ const ProductDetails = () => {
 							>
 								Edit Product Details
 					</Link>}
-					{/* <button className="make-offer-btn">Edit Product Details</button>} */}
 				</div>
 				{/* <CarouselImages /> */}
 			</div>

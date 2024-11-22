@@ -6,25 +6,24 @@ import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
 function AddProduct({ mode }) {
     const location = useLocation();
     const { product } = location?.state || {};
-    const productId = product._id;
-    const [formData, setFormData] = useState({
+    const productId = product?._id  || {};
+    const productFormData = mode=='EDIT' ? {
         title: product.title,
         description: product.description,
         category: product.category,
         price: product.price,
         location: product.location,
         img: product.img,
-    });
-
-    const productFormData = {
-        title: product.title,
-        description: product.description,
-        category: product.category,
-        price: product.price,
-        location: product.location,
-        img: product.img,
+    } : {
+        title: '',
+        description: '',
+        category: '',
+        price: '',
+        location: '',
+        img: '',
     };
 
+    const [formData, setFormData] = useState(productFormData);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
