@@ -4,7 +4,7 @@ import "../styles/Modal.css";
 
 import { PAGE_LINK } from "../utils/config";
 
-const Modal = ({ onCloseModal }) => {
+const LoginCheckModal = ({ onCloseModal }) => {
 	return (
 		<div className="modal-overlay">
 			<div className="modal">
@@ -23,4 +23,4 @@ const Modal = ({ onCloseModal }) => {
 	);
 };
 
-export default Modal;
+export default LoginCheckModal;

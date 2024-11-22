@@ -3,6 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useLocation } from "react-router-dom";
 import CarouselImages from "./CarouselImages";
+import LoginCheckModal from "./LoginCheckModal.jsx";
 import Snackbar from '@mui/material/Snackbar';
 import ProductInfo from "./ProductInfo";
 import MakeOfferModal from "./MakeOfferModal.jsx";
@@ -13,12 +14,14 @@ import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
 const ProductDetails = () => {
 	const store = useContext(StoreContext);
 	const product = store.state.product;
+	const isLoggedIn = store.state.isLoggedIn;
 	const user = store.state.user;
 	const productId = product._id;
 	
 	const location = useLocation();
 	const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 	const [showModal, setShowModal] = useState(false);
+	const [showCheckModal, setCheckModal] = useState(false);
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [submit, setSubmit] = useState(false);
 
@@ -26,6 +29,14 @@ const ProductDetails = () => {
 		setShowModal(false);
 	};
 
+	const onCloseCheckModal = () => {
+		setCheckModal(false);
+	}
+
+	const onClickMakeOffer = () => {
+		if(!isLoggedIn) setCheckModal(true);
+		else setShowModal(true);
+	}
 	const handleShowSnackbar = (val) => {
 		setIsSnackbarOpen(val);
 	  };
@@ -68,12 +79,15 @@ const ProductDetails = () => {
 
 	// add item to basket handler
 	const addItemToBasketHandler = () => {
-		if (!userId) {
-			setShowModal(true);
-			// reset the quantity after the item has been added to the basket
-			store.dispatch({ type: StoreActions.UPDATE_QUANTITY, payload: 0 });
-		} else {
-			setSubmit(true);
+		if(!isLoggedIn) setCheckModal(true);
+		else{
+			if (!userId) {
+				setShowModal(true);
+				// reset the quantity after the item has been added to the basket
+				store.dispatch({ type: StoreActions.UPDATE_QUANTITY, payload: 0 });
+			} else {
+				setSubmit(true);
+			}
 		}
 	};
 
@@ -87,8 +101,8 @@ const ProductDetails = () => {
 					className="product-image"
 				/>
 				<div className="button-container">
-					<button className="make-offer-btn" onClick={()=>setShowModal(true)}>Make an Offer</button>
-					<button className="make-offer-btn">Edit Product Details</button>
+					<button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
+					{isLoggedIn && <button className="make-offer-btn">Edit Product Details</button>}
 				</div>
 				{/* <CarouselImages /> */}
 			</div>
@@ -113,6 +127,8 @@ const ProductDetails = () => {
 				userEmail={user.email}
 				productTitle={product.title}
 				productPrice={product.price} />}
+
+			{showCheckModal && <LoginCheckModal  onCloseModal={onCloseCheckModal} />}
 
 			<Snackbar
 				open={isSnackbarOpen}
