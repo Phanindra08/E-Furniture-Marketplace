@@ -1,9 +1,10 @@
 import { Link as ScrollLink } from "react-scroll";
 import { useContext, useState, useEffect } from "react";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useLocation } from "react-router-dom";
 import CarouselImages from "./CarouselImages";
 import ProductInfo from "./ProductInfo";
-import Modal from "./Modal";
+import MakeOfferModal from "./MakeOfferModal.jsx";
 
 import { StoreContext, StoreActions } from "../store";
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
@@ -11,7 +12,7 @@ import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
 const ProductDetails = () => {
 	const store = useContext(StoreContext);
 	const product = store.state.product;
-	console.log("prodct",product)
+	const user = store.state.user;
 	const productId = product._id;
 	
 	const location = useLocation();
@@ -81,7 +82,7 @@ const ProductDetails = () => {
 					className="product-image"
 				/>
 				<div className="button-container">
-					<button className="make-offer-btn">Make an Offer</button>
+					<button className="make-offer-btn" onClick={()=>setShowModal(true)}>Make an Offer</button>
 					<button className="make-offer-btn">Edit Product Details</button>
 				</div>
 				{/* <CarouselImages /> */}
@@ -128,7 +129,12 @@ const ProductDetails = () => {
 					</button>
 				</div>}
 			</div>
-			{showModal && <Modal onCloseModal={onCloseModal} />}
+			{showModal && 
+			<MakeOfferModal 
+				onCloseModal={onCloseModal} 
+				sellerEmail={product.seller.email} 
+				userEmail={user.email}
+				productTitle={product.title} />}
 		</section>
 	);
 };

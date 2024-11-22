@@ -28,11 +28,12 @@ const Login = () => {
 					userData = await userRes.json();
 					localStorage.setItem("token", userData.token);
 
+					console.log("userData",userData)
 					if (userData.data) {
 						localStorage.setItem("userId", userData.data.id.toString());
 						store.dispatch({
 							type: StoreActions.UPDATE_USER,
-							payload: userData.data.username,
+							payload: userData.data,
 						});
 						navigate(PAGE_LINK.HOME, { replace: true });
 					}
