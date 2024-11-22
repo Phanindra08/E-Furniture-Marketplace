@@ -38,7 +38,7 @@ export const makeOffer = async (req, res) => {
     // Email content
     const mailOptions = {
         from: `"Your Name" <${process.env.EMAIL_USER}>`,
-        to: "mail.unknown.110@gmail.com",
+        to: "furnituremarketplace123@gmail.com",
         // to: sellerEmail,
         subject: `Exciting Offer Received for Your Product ${productTitle} !`,
         text: `
