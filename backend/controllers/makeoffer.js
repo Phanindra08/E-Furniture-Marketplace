@@ -63,7 +63,7 @@ export const makeOffer = async (req, res) => {
     };
 
     // // Send the email
-    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 
     // Respond to the client
     res.status(200).json({ success: true, message: 'Offer email sent successfully.' });
