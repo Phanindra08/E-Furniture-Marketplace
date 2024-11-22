@@ -1,61 +1,69 @@
-import React, { useState } from 'react';
-import { TextField, Button, Typography, Card, CardContent, Grid, IconButton } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { TextField, Button, Typography, Card, CardContent, Grid } from '@mui/material';
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
 
-function AddProduct() {
+function AddProduct({ mode }) {
+    const location = useLocation();
+    const { product } = location?.state || {};
+    const productId = product._id;
     const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        category: '',
-        price: '',
-        location: '',
-        img: '',
+        title: product.title,
+        description: product.description,
+        category: product.category,
+        price: product.price,
+        location: product.location,
+        img: product.img,
     });
+
+    const productFormData = {
+        title: product.title,
+        description: product.description,
+        category: product.category,
+        price: product.price,
+        location: product.location,
+        img: product.img,
+    };
+
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleImageChange = (e) => {
-        setFormData({ ...formData, img:  e.target.value });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            // Send a POST request to the backend to add a new product
-                const res = await fetch(`${APIEndPoints.ADDPRODUCT}`, {
-                method: 'POST',
-                headers: { "Content-Type": "application/json",Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN), }, // Send JSON data
-				body: JSON.stringify(formData), // Convert formData to JSON
-              });
-            
-    
-            // Check if the response is not successful (status code outside 200–299 range)
-            if (!res.ok) {
-                throw new Error(`Failed to add product: ${res.statusText}`);
-            }
-    
-            // // Parse the response JSON to get the created product data
-            const data = await res.json();
-            console.log("Product added successfully:", data);
-    
-            // // Reset the form after successful submission
-            setFormData({
-                title: '',
-                description: '',
-                category: '',
-                price: '',
-                location: '',
-                img: '',
-            });
-            
-            // Optional: Display success message or handle success state
-            alert("Product added successfully!");    
-            
 
+        try {
+            const method = mode === 'add' ? 'POST' : 'PUT';
+            const endpoint = mode === 'add' ? APIEndPoints.ADDPRODUCT : `${APIEndPoints.UPDATEPRODUCT}/${productId}`;
+            const res = await fetch(endpoint, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
+                },
+                body: JSON.stringify(formData),
+            });
+
+            console.log("res --",res)
+            if (!res.ok) throw new Error(`Failed to ${mode === 'add' ? 'add' : 'update'} product`);
+            const data = await res.json();
+            console.log(`${mode === 'add' ? 'Product added' : 'Product updated'} successfully:`, data);
+
+            alert(`Product ${mode === 'add' ? 'added' : 'updated'} successfully!`);
+            // Reset the form for add mode
+            
+                setFormData({
+                    title: '',
+                    description: '',
+                    category: '',
+                    price: '',
+                    location: '',
+                    img: '',
+                });
+            
         } catch (error) {
-            console.error("Error adding product:", error);
+            console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} product:`, error);
         }
     };
 
@@ -64,7 +72,7 @@ function AddProduct() {
             <Card style={{ maxWidth: 600, padding: '20px 5px' }}>
                 <CardContent>
                     <Typography gutterBottom variant="h5">
-                        Add a New Product
+                        {mode === 'add' ? 'Add a New Product' : 'Edit Product Details'}
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <TextField
@@ -120,17 +128,14 @@ function AddProduct() {
                             required
                             margin="normal"
                         />
-
-                        <Grid item xs={10}>
-                            <TextField
-                                fullWidth
-                                placeholder="Image URL"
-                                value={formData.img}
-                                onChange={(e) => handleImageChange(e)}
-                                margin="normal"
-                            />
-                        </Grid>
-
+                        <TextField
+                            fullWidth
+                            placeholder="Image URL"
+                            name="img"
+                            value={formData.img}
+                            onChange={handleChange}
+                            margin="normal"
+                        />
                         <Button
                             type="submit"
                             variant="contained"
@@ -138,7 +143,7 @@ function AddProduct() {
                             fullWidth
                             style={{ marginTop: '1rem' }}
                         >
-                            Add Product
+                            {mode === 'add' ? 'Add Product' : 'Update Product'}
                         </Button>
                     </form>
                 </CardContent>

@@ -110,3 +110,33 @@ export const getMyProducts = async (req, res) => {
             .json({ message: "Error adding product", error: error.message || error });
     }
 };
+
+// Update product details by ID 
+export const updateProductById = async (req, res) => {
+    console.log("updateProductById")
+    try {
+        const { productId } = req.params;
+        const { title, description, price, category, img, location } = req.body;
+
+        // Find the product by ID and update it
+        const updatedProduct = await Product.findByIdAndUpdate(
+            productId,
+            { title, description, price, category, img, location },
+            { new: true, runValidators: true } // Return the updated product and validate inputs
+        );
+
+        if (!updatedProduct) {
+            return res
+                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
+                .json({ message: "Product not found" });
+        }
+
+        // Return the updated product details
+        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: updatedProduct });
+    } catch (error) {
+        console.error("Error updating product details:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Failed to update product details", error: error.message });
+    }
+};

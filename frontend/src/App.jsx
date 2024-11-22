@@ -28,7 +28,8 @@ const App = () => {
 			<main>
 				<Routes>
 					<Route path={PAGE_LINK.HOME} element={<Home />} />
-					<Route path={PAGE_LINK.ADDPRODUCT} element={<AddProduct />} />
+					<Route path={PAGE_LINK.ADDPRODUCT} element={<AddProduct mode="add" />} />
+					<Route path={`${PAGE_LINK.UPDATEPRODUCT}/:id`} element={<AddProduct mode="edit" />} />
 					<Route path={PAGE_LINK.SHOP} element={<Shop />} />
 					<Route path={PAGE_LINK.LOGIN} element={<Login />} />
 					<Route path={PAGE_LINK.REGISTER} element={<Register />} />
