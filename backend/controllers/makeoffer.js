@@ -40,7 +40,7 @@ export const makeOffer = async (req, res) => {
         from: `"Your Name" <${process.env.EMAIL_USER}>`,
         to: "mail.unknown.110@gmail.com",
         // to: sellerEmail,
-        subject: `New Offer for ${productTitle}`,
+        subject: `Exciting Offer Received for Your Product ${productTitle} !`,
         text: `
 
             Hello,
@@ -63,7 +63,7 @@ export const makeOffer = async (req, res) => {
     };
 
     // // Send the email
-    await transporter.sendMail(mailOptions);
+    // await transporter.sendMail(mailOptions);
 
     // Respond to the client
     res.status(200).json({ success: true, message: 'Offer email sent successfully.' });

@@ -4,18 +4,15 @@ import Snackbar from '@mui/material/Snackbar';
 import { APIEndPoints } from "../utils/config.js";
 
 const MakeOfferModal = (props) => {
-	const {onCloseModal, sellerEmail, userEmail, productTitle } = props;
+	const {onCloseModal, handleShowSnackbar, sellerEmail, userEmail, productTitle, productPrice } = props;
   const [offerPrice, setOfferPrice] = useState('');
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Handle submitting the offer
   const handleSubmitOffer = async () => {
-    if (offerPrice <= 0 || isNaN(offerPrice)) {
+    if (offerPrice <= 0 || isNaN(offerPrice) || productPrice<=offerPrice) {
       alert('Please enter a valid offer price.');
       return;
     }
-
-    
 
     try {
       // Send the offer to the backend API to trigger the email
@@ -32,8 +29,10 @@ const MakeOfferModal = (props) => {
       
       const data = await response.json();
       if (data.success) {
-        setShowSuccessMessage(true);
+        // setShowSuccessMessage(true);
+         
         onCloseModal();
+        handleShowSnackbar(true);
       } else {
         alert('Failed to send offer');
       }
@@ -41,11 +40,6 @@ const MakeOfferModal = (props) => {
       console.error('Error sending offer:', error);
       alert('An error occurred while submitting your offer.');
     }
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") return; // Prevent close when clicking outside
-    setShowSuccessMessage(false); // Close the Snackbar
   };
 
   return (
@@ -62,23 +56,6 @@ const MakeOfferModal = (props) => {
         />
         <button onClick={handleSubmitOffer}>Submit Offer</button>
 
-        {showSuccessMessage && 
-          <Snackbar
-            open={showSuccessMessage}
-            autoHideDuration={3000} // Auto-close after 3 seconds
-            // onClose={}
-            onClose={handleSnackbarClose}
-            message="Your offer has been sent to the seller!"
-            ContentProps={{
-              style: {
-                position: 'fixed',
-                top: '50%', // Center vertically
-                left: '50%', // Center horizontally
-                transform: 'translate(-50%, -50%)', // Adjust for alignment
-              },
-            }}
-          />
-        }
       </div>
     </div>
   );
