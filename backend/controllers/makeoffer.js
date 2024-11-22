@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
+
 // Configure Nodemailer transporter (use environment variables for sensitive information)
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // or any other email service provider
+    service: 'gmail', 
     auth: {
-        user: process.env.EMAIL_USER,  // your email address
-        pass: process.env.EMAIL_PASS   // your email password (use environment variables for security)
+        user: process.env.EMAIL_USER,  
+        pass: process.env.EMAIL_PASS  
     }
 });
 
@@ -22,38 +23,46 @@ export const makeOffer = async (req, res) => {
   }
 
   try {
-    console.log("try method")
-    // Set up Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail', // Replace with your email provider
-      auth: {
-        user: process.env.EMAIL_USER, // Your email address from .env file
-        pass: process.env.EMAIL_PASSWORD, // Your email password from .env file
-      },
-    });
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com", // SMTP server address (usually mail.your-domain.com)
+        port: 465, // Port for SMTP (usually 465)
+        secure: true, // Usually true if connecting to port 465
+        auth: {
+          user: process.env.EMAIL_USER, 
+          pass:  process.env.EMAIL_PASS, 
+        },
+      });
+      
 
     // Email content
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: sellerEmail,
-      subject: `New Offer for ${productTitle}`,
-      text: `
-        Hello,
+        from: `"Your Name" <${process.env.EMAIL_USER}>`,
+        to: "mail.unknown.110@gmail.com",
+        // to: sellerEmail,
+        subject: `New Offer for ${productTitle}`,
+        text: `
 
-        A new offer has been made for your product:
+            Hello,
 
-        Product: ${productTitle}
-        Offered Price: ${offerPrice}
-        Buyer Email: ${userEmail}
+            We’re thrilled to inform you that a potential buyer has expressed interest in your product and has made an offer. Here are the details:
 
-        Please respond to the buyer to finalize the deal.
+            Product Name: ${productTitle}
+            Offered Price: ${offerPrice}
+            Buyer's Contact: ${userEmail}
 
-        Best regards,
-        Your Marketplace Team
-      `,
+            The buyer is eager to connect with you to finalize the deal. Please review the offer and respond at your earliest convenience to discuss the next steps.
+
+            If you have any questions or need assistance, feel free to reach out to our support team. We’re here to ensure a seamless transaction experience for you.
+
+            Thank you for being a valued member of our marketplace!
+
+            Warm regards,
+            Your Marketplace Team
+        `,
     };
 
-    // Send the email
+    // // Send the email
     await transporter.sendMail(mailOptions);
 
     // Respond to the client
