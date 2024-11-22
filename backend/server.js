@@ -9,6 +9,7 @@ import initProductRouter from "./routes/init.js";
 import featuredItemsRouter from "./routes/featuredItems.js";
 import productsRouter from "./routes/product.js";
 import basketRouter from "./routes/basket.js";
+import makeOfferRouter from "./routes/makeoffer.js"
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,6 +27,7 @@ app.use("/init", initProductRouter);
 app.use("/featuredItems", featuredItemsRouter);
 app.use("/products", productsRouter);
 app.use("/basket", basketRouter);
+app.use("/makeOffer",makeOfferRouter);
 
 
 // Connect to MongoDB Atlas database

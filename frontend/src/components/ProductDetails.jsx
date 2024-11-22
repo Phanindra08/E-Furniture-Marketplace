@@ -1,9 +1,11 @@
 import { Link as ScrollLink } from "react-scroll";
 import { useContext, useState, useEffect } from "react";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useLocation } from "react-router-dom";
 import CarouselImages from "./CarouselImages";
+import Snackbar from '@mui/material/Snackbar';
 import ProductInfo from "./ProductInfo";
-import Modal from "./Modal";
+import MakeOfferModal from "./MakeOfferModal.jsx";
 
 import { StoreContext, StoreActions } from "../store";
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
@@ -11,19 +13,24 @@ import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
 const ProductDetails = () => {
 	const store = useContext(StoreContext);
 	const product = store.state.product;
-	console.log("prodct",product)
+	const user = store.state.user;
 	const productId = product._id;
 	
 	const location = useLocation();
 	const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 	const [showModal, setShowModal] = useState(false);
+	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [submit, setSubmit] = useState(false);
 
 	const onCloseModal = () => {
 		setShowModal(false);
 	};
 
-	// use effect for posting data to db===============================
+	const handleShowSnackbar = (val) => {
+		setIsSnackbarOpen(val);
+	  };
+
+	// use effect for posting data to db
 	useEffect(() => {
 		// if user logged in
 		if (submit) {
@@ -57,10 +64,9 @@ const ProductDetails = () => {
 		}
 		// reset submit to false after the POST request is made
 		setSubmit(false);
-		// eslint-disable-next-line
 	}, [submit]);
 
-	// add item to basket handler ========================================
+	// add item to basket handler
 	const addItemToBasketHandler = () => {
 		if (!userId) {
 			setShowModal(true);
@@ -81,7 +87,7 @@ const ProductDetails = () => {
 					className="product-image"
 				/>
 				<div className="button-container">
-					<button className="make-offer-btn">Make an Offer</button>
+					<button className="make-offer-btn" onClick={()=>setShowModal(true)}>Make an Offer</button>
 					<button className="make-offer-btn">Edit Product Details</button>
 				</div>
 				{/* <CarouselImages /> */}
@@ -89,46 +95,35 @@ const ProductDetails = () => {
 			<div className="productInfo-container">
 				<h2 className="productInfo-title">{product.title}</h2>
 				<div className="stars">
-					{/* {starIcons.map((star, index) => {
-						return <span key={index}>{star}</span>;
-					})}
-					<span>{getRating(product.rating)}</span> */}
-					{/* react-scroll */}
-					{/* <ScrollLink
-						to="reviews"
-						className="review-number"
-						smooth={true}
-						duration={500}
-						spy={true}
-						exact="true"
-						offset={-70}
-					>
-						{product.review}Reviews
-					</ScrollLink> */}
 					<div>{`Product Seller: ${product.seller ? product.seller.username : ''}`}</div>
                 </div>
                 <h3 className="productInfo-price">£{product.price}</h3>
                 <ProductInfo description={product.description}/>
                 {product.userId != userId && <div className="productInfo-select">
-					{/* <input
-						type="number"
-						name="num"
-						className="num"
-						min="1"
-						value={store.state.quantity}
-						onChange={(e) =>
-							store.dispatch({
-								type: StoreActions.UPDATE_QUANTITY,
-								payload: e.target.value,
-							})
-						}
-					/> */}
 					<button className="add-btn" onClick={addItemToBasketHandler}>
 						Add to Wishlist
 					</button>
 				</div>}
 			</div>
-			{showModal && <Modal onCloseModal={onCloseModal} />}
+			{showModal && 
+			<MakeOfferModal 
+				onCloseModal={onCloseModal} 
+				handleShowSnackbar={handleShowSnackbar}
+				sellerEmail={product.seller.email} 
+				userEmail={user.email}
+				productTitle={product.title}
+				productPrice={product.price} />}
+
+			<Snackbar
+				open={isSnackbarOpen}
+				autoHideDuration={1000}
+				onClose={() => handleShowSnackbar(false)}
+				message={<div style={{ fontSize: "15px" }}>{"Your offer has been successfully sent to the seller!"}</div>}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "center",
+				}}
+			/>
 		</section>
 	);
 };

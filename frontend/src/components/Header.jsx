@@ -65,7 +65,7 @@ const Header = () => {
 					{store.state.isLoggedIn && store.state.user && (
 						<div className="navbar__icon">
 							<span className="navbar-name">
-								Hi {formatUserName(store.state.user)}
+								Hi {formatUserName(store.state.user.username)}
 							</span>
 
 							<span onClick={handleClick}>

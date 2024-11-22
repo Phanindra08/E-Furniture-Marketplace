@@ -1,5 +1,6 @@
 export const APIEndPoints = {
 	BASKET: "http://localhost:5000/basket/",
+	MAKEOFFER: "http://localhost:5000/makeOffer/",
 	LOGIN: "http://localhost:5000/user/login",
 	REGISTER: "http://localhost:5000/user/register",
 	SHOP: "http://localhost:5000/products",
