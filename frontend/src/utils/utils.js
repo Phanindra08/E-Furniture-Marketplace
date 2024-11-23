@@ -25,7 +25,9 @@ export const colorNames = [
 	"Grey",
 	"Lavender",
 ];
-export const categoryNames = ["Chair", "Table", "Bed", "Lamp", "Sofa"];
+
+export const categoryNames = ["Chair", "Table", "Bed", "Lamp", "Sofa", "Desks", "Mirrors", "Other"];
+export const locationNames = ["Charlotte", "Raleigh", "Greensboro", "Durham", "Fayetteville", "Cary", "High Point", "Wilmington", "Asheville", "Gastonia", "Chapel Hill", "Greenville", "Jackson", "Hickory", "Burlington", "Concord", "Mooresville", "Huntersville", "RockyMount", "IndianTrail", "Wilson", "Monroe", "Goldboro", "Indian Beach", "Statesville", "Mint Hill", "Other"]
 
 // define a dummy text=======================================
 export const productInfoText =
