@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../styles/Modal.css";
-import Snackbar from '@mui/material/Snackbar';
 import { APIEndPoints } from "../utils/config.js";
 
 const MakeOfferModal = (props) => {

@@ -1,5 +1,4 @@
 import { useContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { PAGE_LINK } from "../utils/config";
 import LoginCheckModal from "./LoginCheckModal.jsx";
@@ -100,7 +99,7 @@ const ProductDetails = () => {
 				/>
 				<div className="button-container">
 					<button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
-					{isLoggedIn && product.userId == userId &&
+					{isLoggedIn && product.userId === userId &&
 						<Link 
 							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`} 
 							className="make-offer-btn"
@@ -118,7 +117,7 @@ const ProductDetails = () => {
                 </div>
                 <h3 className="productInfo-price">£{product.price}</h3>
                 <ProductInfo description={product.description}/>
-                {product.userId != userId && <div className="productInfo-select">
+                {product.userId !== userId && <div className="productInfo-select">
 					<button className="add-btn" onClick={addItemToBasketHandler}>
 						Add to Wishlist
 					</button>

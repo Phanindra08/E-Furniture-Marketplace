@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { TextField, Button, Typography, Card, CardContent, Grid } from '@mui/material';
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
 
@@ -7,7 +7,7 @@ function AddProduct({ mode }) {
     const location = useLocation();
     const { product } = location?.state || {};
     const productId = product?._id  || {};
-    const productFormData = mode=='EDIT' ? {
+    const productFormData = mode ==='EDIT' ? {
         title: product.title,
         description: product.description,
         category: product.category,

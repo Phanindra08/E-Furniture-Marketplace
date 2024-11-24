@@ -1,4 +1,4 @@
-import { productInfoText, productInfoSize, colorNames } from "../utils/utils";
+import { productInfoSize } from "../utils/utils";
 
 const ProductInfo = (props) => {
 	return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Typography } from '@mui/material';
 import { APIEndPoints, LOCAL_STORAGE } from '../utils/config';
 import Product from '../components/Product';
 import "../styles/MyProduct.css";

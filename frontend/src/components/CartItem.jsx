@@ -1,8 +1,6 @@
 import { useContext } from "react";
-import { FaPlus, FaMinus } from "react-icons/fa";
 
 import { StoreContext, StoreActions } from "../store";
-import { starIcons, getRating } from "../utils/utils";
 import { FaTrash } from 'react-icons/fa';
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
 
@@ -59,13 +57,13 @@ const CartItem = ({ item }) => {
 	};
 
 	// add more items to cart ================================
-	const addItem = (item) => {
-		const quantity = Number(item.quantity) + 1;
-		console.log("add item",item)
-		const productId = item.productId._id;
+	// const addItem = (item) => {
+	// 	const quantity = Number(item.quantity) + 1;
+	// 	console.log("add item",item)
+	// 	const productId = item.productId._id;
 
-		updateBasketData(quantity, productId);
-	};
+	// 	updateBasketData(quantity, productId);
+	// };
 
 	// remove items from cart==================================
 	const removeItem = (item) => {
