@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { BsFillPersonFill } from "react-icons/bs";
 import { useContext } from "react";
 
@@ -80,7 +80,7 @@ const Header = () => {
 									</div>
 								)}
 								<span className="basket">
-									<FaShoppingCart />
+									<FaHeart />
 								</span>
 							</Link>
 						</div>
