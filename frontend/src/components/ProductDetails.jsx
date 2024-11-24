@@ -154,7 +154,7 @@ const ProductDetails = () => {
 						cursor: "pointer",
 					}}
 				>
-					<DeleteIcon style={{ color: "red", fontSize: "24px" }} />
+					<DeleteIcon style={{ color: "black", fontSize: "24px" }} />
 				</button>
 				   </>
 				)}
