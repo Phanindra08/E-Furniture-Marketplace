@@ -143,8 +143,13 @@ export const getSearchValue = async (req, res) => {
 	try {
 		const { searchvalue } = req.params;
 		const products = await Product.find({
-			$or: [{ title: searchvalue }, { category: searchvalue }],
-		});
+            $or: [
+              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } }
+            ],
+          });
+          
 		res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
 	} catch (err) {
 		res
@@ -229,5 +234,41 @@ export const updateProductById = async (req, res) => {
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
             .json({ message: "Failed to update product details", error: error.message });
+    }
+};
+
+// Delete a product by ID
+export const deleteProductById = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        // Check if the user is authenticated and owns the product
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res
+                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
+                .json({ message: "Product not found" });
+        }
+
+        if (product.userId.toString() !== req.user.id) {
+            return res
+                .status(HTTP_RESPONSE.FORBIDDEN.CODE)
+                .json({ message: "You are not authorized to delete this product" });
+        }
+
+        // Delete the product
+        await Product.findByIdAndDelete(productId);
+
+        // Return a success response
+        return res.status(HTTP_RESPONSE.OK.CODE).json({
+            message: "Product successfully deleted",
+            productId: productId,
+        });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Failed to delete product", error: error.message });
     }
 };

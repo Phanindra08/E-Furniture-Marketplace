@@ -32,10 +32,7 @@ app.use("/makeOffer",makeOfferRouter);
 
 // Connect to MongoDB Atlas database
 mongoose
-	.connect(mongoUrl, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true
-	})
+	.connect(mongoUrl)
 	.then(() => {
 		console.log("Connected to MongoDB Atlas database");
 	})
