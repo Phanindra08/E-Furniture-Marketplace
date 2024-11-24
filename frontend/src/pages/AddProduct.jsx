@@ -133,6 +133,7 @@ function AddProduct({ mode }) {
                             name="img"
                             value={formData.img}
                             onChange={handleChange}
+                            required
                             margin="normal"
                         />
                         <Button
