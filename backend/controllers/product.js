@@ -4,56 +4,152 @@ import { HTTP_RESPONSE } from "../utils/config.js";
 import {seedProducts} from "../seeds/products.js"
 import { User } from "../models/user.js";
 
-// get all products=======================================
+//get all products=======================================
 export const getAllProducts = async (req, res) => {
     try {
-        if (Object.keys(req.query).length === 0) {
-            const products = await Product.find().populate('seller');
-            return res.json({ data: products });
-		} else {
-			console.log("else part");
-			// const colors = req.query.color?.split(",") || [];
-			const categories = req.query.category?.split(",") || [];
-			// const collections = req.query.collection?.split(",") || [];
-			const price = req.query.price ? Number(req.query.price) : null;
+        const { category, excludedCategories, price, location, excludedLocations } = req.query; // Extract query parameters
+    
+        // Initialize the filters array
+        const filters = [];
+    
+        // Location filter
+        const locationConditions = [];
+        if (location) {
+            locationConditions.push({
+                location: {
+                    $regex: `(?:^|\\b)${location.replace(/\s/g, "\\s*")}(?:\\b|$)`,
+                    $options: "i" // Case-insensitive matching
+                }
+            });
+        }
+        if (excludedLocations) {
+            const excludedLocationsArray = excludedLocations.split(",").filter(exc =>
+                !location || exc.toLowerCase() !== location.toLowerCase()
+            );
+            if (excludedLocationsArray.length) {
+                locationConditions.push({
+                    location: {
+                        $not: {
+                            $regex: `(?:^|\\b)(${excludedLocationsArray.map(exc => exc.replace(/\s/g, "\\s*")).join("|")})(?:\\b|$)`,
+                            $options: "i" // Case-insensitive matching
+                        }
+                    }
+                });
+            }
+        }
+        if (locationConditions.length) {
+            filters.push({ $or: locationConditions });
+        }
+    
+        // Category filter
+        const categoryConditions = [];
+        if (category) {
+            categoryConditions.push({
+                category: {
+                    $regex: `(?:^|\\b)${category.replace(/\s/g, "\\s*")}(?:\\b|$)`,
+                    $options: "i" // Case-insensitive matching
+                }
+            });
+        }
+        if (excludedCategories) {
+            const excludedCategoriesArray = excludedCategories.split(",").filter(exc =>
+                !category || exc.toLowerCase() !== category.toLowerCase()
+            );
+            if (excludedCategoriesArray.length) {
+                categoryConditions.push({
+                    category: {
+                        $not: {
+                            $regex: `(?:^|\\b)(${excludedCategoriesArray.map(exc => exc.replace(/\s/g, "\\s*")).join("|")})(?:\\b|$)`,
+                            $options: "i" // Case-insensitive matching
+                        }
+                    }
+                });
+            }
+        }
+        if (categoryConditions.length) {
+            filters.push({ $or: categoryConditions });
+        }
+    
+        // Price filter
+        if (price) {
+            const numericPrice = Number(price);
+            if (!isNaN(numericPrice)) {
+                filters.push({
+                    price: { $lte: numericPrice } // Ensure price is treated as a number
+                });
+            }
+        }
+    
+        // Combine all filters using $and
+        const query = filters.length ? { $and: filters } : {};
 
-			const query = {};
+        // Fetch filtered products
+        const products = await Product.find(query).populate('seller');
 
-			// if (colors.length > 0) {
-			// 	query.color = { $in: colors };
-			// }
-
-			if (categories.length > 0) {
-				query.category = { $in: categories };
-			}
-
-			// if (collections.length > 0) {
-			// 	query.collection_ = { $in: collections };
-			// }
-
-			if (price !== null) {
-				query.price = { $lt: price };
-			}
-
-			const products = await Product.find(query);
-			console.log("products",products);
-			return res.json({ data: products });
-		}
-	} catch (error) {
-		console.error("Error details:", error);
-		res
-			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-			.json(HTTP_RESPONSE.INTERNAL_ERROR.MESSAGE);
-	}
+        // Return the filtered products
+        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Error fetching products", error: error.message });
+    }
 };
+
+
+
+// export const getAllProducts = async (req, res) => {
+//     try {
+//         const { category, title, price } = req.query; // Extract query parameters
+
+//         // Build the query object
+//         const query = {};
+
+//         // Add category filter if provided
+//         if (category) {
+//             const categories = category.split(","); // Split categories by comma
+//             query.category = { $in: categories };   // Match any of the specified categories
+//         }
+
+//         // Add title filter if provided (case-insensitive partial match)
+//         if (title) {
+//             query.title = { $regex: title, $options: "i" }; // Case-insensitive search
+//         }
+
+//         // Add price filter if provided
+//         if (price) {
+//             query.price = { 
+//                 $lte: price.toString() // Ensure the price is compared as a string
+//             };
+//         }
+
+//         // Fetch filtered products
+//         const products = await Product.find(query).populate('seller');
+
+//         // Return the filtered products
+//         return res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
+//     } catch (error) {
+//         console.error("Error fetching products:", error);
+//         return res
+//             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+//             .json({ message: "Error fetching products", error: error.message });
+//     }
+// };
+
+
 
 // get search value
 export const getSearchValue = async (req, res) => {
 	try {
 		const { searchvalue } = req.params;
 		const products = await Product.find({
-			$or: [{ title: searchvalue }, { category: searchvalue }],
-		});
+            $or: [
+              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } }
+            ],
+          });
+          
 		res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
 	} catch (err) {
 		res
@@ -138,5 +234,41 @@ export const updateProductById = async (req, res) => {
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
             .json({ message: "Failed to update product details", error: error.message });
+    }
+};
+
+// Delete a product by ID
+export const deleteProductById = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        // Check if the user is authenticated and owns the product
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res
+                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
+                .json({ message: "Product not found" });
+        }
+
+        if (product.userId.toString() !== req.user.id) {
+            return res
+                .status(HTTP_RESPONSE.FORBIDDEN.CODE)
+                .json({ message: "You are not authorized to delete this product" });
+        }
+
+        // Delete the product
+        await Product.findByIdAndDelete(productId);
+
+        // Return a success response
+        return res.status(HTTP_RESPONSE.OK.CODE).json({
+            message: "Product successfully deleted",
+            productId: productId,
+        });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Failed to delete product", error: error.message });
     }
 };
