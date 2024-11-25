@@ -11,7 +11,10 @@ const productSchema = new Schema({
         message: '{VALUE} is not a valid integer'
     }},
     category: { type: String, required: true },
-    img: { type: String, required: true },
+    img: {
+        data: Buffer, // Binary data for the image
+        contentType: String, // MIME type (e.g., image/jpeg, image/png)
+    },
     location: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

@@ -85,9 +85,26 @@ export const getAllProducts = async (req, res) => {
 
         // Fetch filtered products
         const products = await Product.find(query).populate('seller');
+        const productsWithImages = products.map(product => {
+            let imgBase64 = null;
+
+            if (product.img && product.img.data) {
+                // Convert Buffer to Base64 and include the MIME type
+                imgBase64 = `data:${product.img.contentType};base64,${product.img.data.toString('base64')}`;
+            }
+
+            // Return the product with the Base64 image
+            return {
+                ...product._doc, // Spread the document properties
+                img: imgBase64,  // Replace `img` with the Base64 string
+            };
+        });
+
+        // Send the modified products array as the response
+        return res.status(HTTP_RESPONSE.OK.CODE).json({ data:productsWithImages});
 
         // Return the filtered products
-        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
+        //return res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
     } catch (error) {
         console.error("Error fetching products:", error);
         return res
@@ -96,45 +113,6 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-
-
-// export const getAllProducts = async (req, res) => {
-//     try {
-//         const { category, title, price } = req.query; // Extract query parameters
-
-//         // Build the query object
-//         const query = {};
-
-//         // Add category filter if provided
-//         if (category) {
-//             const categories = category.split(","); // Split categories by comma
-//             query.category = { $in: categories };   // Match any of the specified categories
-//         }
-
-//         // Add title filter if provided (case-insensitive partial match)
-//         if (title) {
-//             query.title = { $regex: title, $options: "i" }; // Case-insensitive search
-//         }
-
-//         // Add price filter if provided
-//         if (price) {
-//             query.price = { 
-//                 $lte: price.toString() // Ensure the price is compared as a string
-//             };
-//         }
-
-//         // Fetch filtered products
-//         const products = await Product.find(query).populate('seller');
-
-//         // Return the filtered products
-//         return res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
-//     } catch (error) {
-//         console.error("Error fetching products:", error);
-//         return res
-//             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-//             .json({ message: "Error fetching products", error: error.message });
-//     }
-// };
 
 
 
@@ -159,47 +137,88 @@ export const getSearchValue = async (req, res) => {
 };
 
 // Add a new product to the list ===============================
+// export const addProduct = async (req, res) => {
+// 	try {
+// 		const { title, description, price, category, img, location } = req.body;
+		
+// 		if (!req.user || !req.user.id) {
+// 			return res.status(400).json({ message: "User not authenticated" });
+// 		}
+		
+// 		const username = await User.findById(req.user.id);
+// 		// Create a new product instance with the provided data
+// 		const newProduct = new Product({
+//             title,
+//             description,
+//             price,
+//             category,
+//             img,
+//             location,
+//             userId: req.user.id,
+//             seller: username
+//         });
+
+// 		// Save the new product to the database
+// 		const savedProduct = await newProduct.save();
+// 		// Respond with the newly created product
+// 		return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
+// 	} catch (error) {
+// 		// Handle errors
+// 		console.error("Detailed error:", error);
+// 		return res
+// 			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+// 			.json({ message: "Error adding product", error: error.message || error });
+// 	}
+// };
+
+
+
 export const addProduct = async (req, res) => {
-	try {
-		const { title, description, price, category, img, location } = req.body;
-		
-		if (!req.user || !req.user.id) {
-			return res.status(400).json({ message: "User not authenticated" });
-		}
-		
-		const username = await User.findById(req.user.id);
-		// Create a new product instance with the provided data
-		const newProduct = new Product({
+    try {
+        console.log("req.body:", req.body);
+        console.log("req.img:", req.file);
+        const { title, description, price, category, location } = req.body;
+
+        // Ensure the user is authenticated
+        if (!req.user || !req.user.id) {
+            return res.status(400).json({ message: "User not authenticated" });
+        }
+
+        // Fetch the user document
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Validate required fields
+        if (!title || !description || !price || !category || !location) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        // Handle uploaded image
+        const img = req.file ? {
+            data: req.file.buffer, // Store file data as a buffer
+            contentType: req.file.mimetype, // Store MIME type
+        } : null;
+
+        // Create a new product instance
+        const newProduct = new Product({
             title,
             description,
             price,
             category,
-            img,
+            img, // Use processed image
             location,
-            userId: req.user.id,
-            seller: username
+            seller: user._id, // Use the user ID as ObjectId
+            userId: user._id, // If userId is a separate field
         });
 
-		// Save the new product to the database
-		const savedProduct = await newProduct.save();
-		// Respond with the newly created product
-		return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
-	} catch (error) {
-		// Handle errors
-		console.error("Detailed error:", error);
-		return res
-			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-			.json({ message: "Error adding product", error: error.message || error });
-	}
-};
+        // Save the product to the database
+        const savedProduct = await newProduct.save();
 
-
-export const getMyProducts = async (req, res) => {
-    try {
-        const userprods = await Product.find({ userId: req.user.id });
-		return res.json(userprods);
+        // Respond with the saved product
+        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
     } catch (error) {
-        // Handle errors
         console.error("Detailed error:", error);
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
@@ -207,17 +226,115 @@ export const getMyProducts = async (req, res) => {
     }
 };
 
+
+
+export const getMyProducts = async (req, res) => {
+    try {
+        // Fetch products for the current user
+        const userprods = await Product.find({ userId: req.user.id });
+
+        // Map over the products to convert image Buffer to Base64
+        const productsWithImages = userprods.map(product => {
+            let imgBase64 = null;
+
+            if (product.img && product.img.data) {
+                // Convert Buffer to Base64 and include the MIME type
+                imgBase64 = `data:${product.img.contentType};base64,${product.img.data.toString('base64')}`;
+            }
+
+            // Return the product with the Base64 image
+            return {
+                ...product._doc, // Spread the document properties
+                img: imgBase64,  // Replace `img` with the Base64 string
+            };
+        });
+
+        // Send the modified products array as the response
+        return res.json(productsWithImages);
+    } catch (error) {
+        console.error("Detailed error:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Error fetching products", error: error.message || error });
+    }
+};
+
+
+// export const getMyProducts = async (req, res) => {
+//     try {
+//         // Ensure the user is authenticated
+//         if (!req.user || !req.user.id) {
+//             return res.status(400).json({ message: "User not authenticated" });
+//         }
+
+//         // Fetch the user document
+//         const user = await User.findById(req.user.id);
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+
+//         // Fetch products for the authenticated user
+//         const userProducts = await Product.find({ seller: user._id });
+
+//         if (!userProducts.length) {
+//             return res.status(404).json({ message: "No products found for this user" });
+//         }
+
+//         // Map the products to include image data as a base64 string
+//         const productsWithImages = userProducts.map((product) => {
+//             let imageUrl = null;
+//             if (product.img && product.img.data) {
+//                 // Convert image buffer to base64
+//                 const base64Image = product.img.data.toString("base64");
+//                 imageUrl = `data:${product.img.contentType};base64,${base64Image}`;
+//             }
+
+//             return {
+//                 ...product._doc, // Spread existing product fields
+//                 img: imageUrl, // Include the base64 image URL
+//             };
+//         });
+
+//         // Respond with the user's products, including images
+//         return res.status(200).json({ data: productsWithImages });
+//     } catch (error) {
+//         console.error("Detailed error:", error);
+//         return res
+//             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+//             .json({ message: "Error fetching user's products", error: error.message || error });
+//     }
+// };
+
+
 // Update product details by ID 
 export const updateProductById = async (req, res) => {
-    console.log("updateProductById")
+    console.log("updateProductById");
     try {
         const { productId } = req.params;
-        const { title, description, price, category, img, location } = req.body;
+        const { title, description, price, category, location } = req.body;
+
+        // Handle the uploaded image (if any)
+        const img = req.file
+            ? {
+                  data: req.file.buffer, // Store the uploaded image data as a buffer
+                  contentType: req.file.mimetype, // Store the MIME type
+              }
+            : undefined; // If no file is uploaded, don't modify the image field
+
+        // Build the fields to update dynamically
+        const updatedFields = {
+            ...(title && { title }),
+            ...(description && { description }),
+            ...(price && { price }),
+            ...(category && { category }),
+            ...(location && { location }),
+            ...(img && { img }), // Include image only if provided
+        };
 
         // Find the product by ID and update it
         const updatedProduct = await Product.findByIdAndUpdate(
             productId,
-            { title, description, price, category, img, location },
+            updatedFields,
             { new: true, runValidators: true } // Return the updated product and validate inputs
         );
 
@@ -236,6 +353,7 @@ export const updateProductById = async (req, res) => {
             .json({ message: "Failed to update product details", error: error.message });
     }
 };
+
 
 // Delete a product by ID
 export const deleteProductById = async (req, res) => {
