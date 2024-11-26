@@ -10,7 +10,7 @@ const Footer = () => {
 		<footer className="footer-container">
 			<div className="footer">
 				<div className="footer__logo">
-					<img src="../assets/images/logo.svg" alt="logo" />
+					<strong>FurniTrade</strong>
 				</div>
 
 				<ul className="footer__lists">
