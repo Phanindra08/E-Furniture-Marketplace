@@ -7,7 +7,9 @@ export const APIEndPoints = {
 	HOME: "http://localhost:5000/featuredItems",
 	ADDPRODUCT: "http://localhost:5000/products/addProduct",
 	UPDATEPRODUCT: "http://localhost:5000/products/updateProduct",
-	MYPRODUCTS: "http://localhost:5000/products/myProducts"
+	MYPRODUCTS: "http://localhost:5000/products/myProducts",
+	USERDETAILS: "http://localhost:5000/user/details",
+	UPDATEUSERDETAILS: "http://localhost:5000/user/updateProfile"
 };
 
 export const PAGE_LINK = {
@@ -19,7 +21,9 @@ export const PAGE_LINK = {
 	BASKET: "/basket",
 	ADDPRODUCT: "/addProduct",
 	UPDATEPRODUCT: "/updateProduct",
-	USERPRODUCTS: "/myProducts"
+	USERPRODUCTS: "/myProducts",
+	USERDETAILS: "/details",
+	UPDATEUSERDETAILS: "/updateProfile"
 };
 
 export const LOCAL_STORAGE = {

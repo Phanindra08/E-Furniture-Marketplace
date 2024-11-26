@@ -64,9 +64,11 @@ const Header = () => {
 					{/* If user exist and user is logged in */}
 					{store.state.isLoggedIn && store.state.user && (
 						<div className="navbar__icon">
-							<span className="navbar-name">
-								Hi {formatUserName(store.state.user.username)}
-							</span>
+							<Link to={PAGE_LINK.USERDETAILS} state={ store.state.user }>
+								<span className="navbar-name">
+									Hi {formatUserName(store.state.user.username)}
+								</span>
+							</Link>
 
 							<span onClick={handleClick}>
 								<Link to={PAGE_LINK.HOME}>Sign Out</Link>
