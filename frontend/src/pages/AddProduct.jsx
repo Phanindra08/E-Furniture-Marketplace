@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TextField, Button, Typography, Card, CardContent, Grid } from "@mui/material";
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
@@ -7,22 +7,30 @@ function AddProduct({ mode }) {
     const location = useLocation();
     const { product } = location?.state || {};
     const productId = product?._id || {};
-    const productFormData = mode === "EDIT" ? {
-        title: product.title,
-        description: product.description,
-        category: product.category,
-        price: product.price,
-        location: product.location,
-    } : {
+    const [formData, setFormData] = useState({
         title: "",
         description: "",
         category: "",
         price: "",
         location: "",
-    };
-
-    const [formData, setFormData] = useState(productFormData);
+        img:""
+    });
     const [image, setImage] = useState(null); // State for handling the selected image file
+
+
+    useEffect(() => {
+        if(product){
+            const prefilledData = {
+                title: product.title,
+                description: product.description,
+                category: product.category,
+                price: product.price,
+                location: product.location,
+                img: product.img
+            };
+            setFormData(prefilledData);
+        }
+      }, [mode=='EDIT',product]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -71,13 +79,14 @@ function AddProduct({ mode }) {
             alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
 
             // Reset the form for add mode
-            setFormData({
-                title: "",
-                description: "",
-                category: "",
-                price: "",
-                location: "",
-            });
+                setFormData({
+                    title: "",
+                    description: "",
+                    category: "",
+                    price: "",
+                    location: "",
+                    img:""
+                });
             setImage(null); // Clear the image file input
             if (fileInputRef.current) {
                 fileInputRef.current.value = ""; // Reset the file input
