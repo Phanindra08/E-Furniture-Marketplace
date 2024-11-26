@@ -9,7 +9,8 @@ export const APIEndPoints = {
 	UPDATEPRODUCT: "http://localhost:5000/products/updateProduct",
 	MYPRODUCTS: "http://localhost:5000/products/myProducts",
 	USERDETAILS: "http://localhost:5000/user/details",
-	UPDATEUSERDETAILS: "http://localhost:5000/user/updateProfile"
+	UPDATEUSERDETAILS: "http://localhost:5000/user/updateProfile",
+	MARKASSOLD: "http://localhost:5000/products/markAsSold"
 };
 
 export const PAGE_LINK = {

@@ -14,6 +14,7 @@ function AddProduct({ mode }) {
         price: product.price,
         location: product.location,
         img: product.img,
+        sold: false
     } : {
         title: '',
         description: '',
@@ -21,6 +22,7 @@ function AddProduct({ mode }) {
         price: '',
         location: '',
         img: '',
+        sold: false
     };
 
     const [formData, setFormData] = useState(productFormData);
