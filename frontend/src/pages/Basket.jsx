@@ -27,9 +27,7 @@ const Basket = () => {
 			const getBasketData = async () => {
 				try {
 					const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
-					console.log("userId---",userId);
 					const val = `${APIEndPoints.BASKET}${userId}`;
-					console.log("Val",val)
 					const res = await fetch(`${APIEndPoints.BASKET}${userId}`, {
 						method: "GET",
 						headers: {
@@ -38,7 +36,6 @@ const Basket = () => {
 						},
 					});
 					const resData = await res.json();
-					console.log("ResDATA",resData)
 					// resData.data.items
 					if (resData && resData.data && resData.data.items) {
 						store.dispatch({
@@ -57,7 +54,6 @@ const Basket = () => {
 		// eslint-disable-next-line
 	}, []);
 
-	console.log("basketItems",basketItems)
 	return (
 		<div className="shopping-cart">
 			<h1>

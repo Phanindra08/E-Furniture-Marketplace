@@ -13,7 +13,6 @@ const CartItem = ({ item }) => {
 
 	// update the basket=======================================
 	const updateBasketData = async (quantity, productId) => {
-		console.log("productId---",productId);
 		await fetch(`${APIEndPoints.BASKET}${productId}`, {
 			method: "PATCH",
 			headers: {
@@ -42,11 +41,9 @@ const CartItem = ({ item }) => {
 			});
 		} else {
 			// update the quantity of the item in the state
-			console.log("item.productId?._id === productId",item.productId?._id === productId)
 			const updatedItems = basketItems.map((item) =>
 				item.productId?._id === productId ? { ...item, quantity } : item
 			);
-			console.log("updatedItems after adding item",updatedItems)
 			store.dispatch({
 				type: StoreActions.UPDATE_BASKETITEMS,
 				payload: updatedItems,
@@ -61,7 +58,6 @@ const CartItem = ({ item }) => {
 	// add more items to cart ================================
 	const addItem = (item) => {
 		const quantity = Number(item.quantity) + 1;
-		console.log("add item",item)
 		const productId = item.productId._id;
 
 		updateBasketData(quantity, productId);
@@ -69,8 +65,6 @@ const CartItem = ({ item }) => {
 
 	// remove items from cart==================================
 	const removeItem = (item) => {
-		console.log("item",item)
-		console.log("remove item",item)
 		const quantity = Number(item.quantity) - 1;
 		const productId = item.productId._id;
 

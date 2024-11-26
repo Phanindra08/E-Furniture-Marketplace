@@ -53,8 +53,6 @@ function AddProduct({ mode }) {
         try {
             const method = mode === "add" ? "POST" : "PUT";
             const endpoint = mode === "add" ? APIEndPoints.ADDPRODUCT : `${APIEndPoints.UPDATEPRODUCT}/${productId}`;
-            console.log("FormData:", formData);
-            console.log("Image:", image);
 
             // Create a FormData object to include the image file and other fields
             const formDataWithImage = new FormData();
@@ -80,7 +78,6 @@ function AddProduct({ mode }) {
 
             if (!res.ok) throw new Error(`Failed to ${mode === "add" ? "add" : "update"} product`);
             const data = await res.json();
-            console.log(`${mode === "add" ? "Product added" : "Product updated"} successfully:`, data);
 
             // alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
             handleShowSnackbar(true);

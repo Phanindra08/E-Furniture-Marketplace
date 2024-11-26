@@ -158,8 +158,7 @@ const ProductDetails = () => {
 				</button>
 				   </>
 				)}
-				</div>
-				{/* <CarouselImages /> */}
+				</div>			
 			</div>
 			<div className="productInfo-container">
 				<h2 className="productInfo-title">{product.title}</h2>

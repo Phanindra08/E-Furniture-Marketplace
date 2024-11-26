@@ -175,8 +175,6 @@ export const getSearchValue = async (req, res) => {
 
 export const addProduct = async (req, res) => {
     try {
-        console.log("req.body:", req.body);
-        console.log("req.img:", req.file);
         const { title, description, price, category, location } = req.body;
 
         // Ensure the user is authenticated
@@ -308,7 +306,6 @@ export const getMyProducts = async (req, res) => {
 
 // Update product details by ID 
 export const updateProductById = async (req, res) => {
-    console.log("updateProductById");
     try {
         const { productId } = req.params;
         const { title, description, price, category, location } = req.body;
