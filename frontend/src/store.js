@@ -10,6 +10,7 @@ export const initialState = {
 		collection: [],
 		category: [],
 		color: [],
+		location: []
 	},
 	rating: null,
 	ratingHover: null,
@@ -26,6 +27,7 @@ export const initialState = {
 	collectionMenuOpen: false,
 	colorMenuOpen: false,
 	categoryMenuOpen: false,
+	locationMenuOpen: false,
 };
 
 export const StoreContext = createContext();
@@ -48,6 +50,7 @@ export class StoreActions {
 	static UPDATE_COLLECTIOMENU_OPEN = "updateCollectionMenuOpen";
 	static UPDATE_COLORMENU_OPEN = "updateColorMenuOpen";
 	static UPDATE_CATEGORYMENU_OPEN = "updateCategoryMenuOpen";
+	static UPDATE_LOCATIONMENU_OPEN = "updateLocationMenuOpen";
 }
 
 // basket items reducer======================================
@@ -190,6 +193,16 @@ export const categoryMenuOpenReducer = (categoryMenuOpen, action) => {
 	}
 };
 
+// locationMenuOpen reducer ====================================
+export const locationMenuOpenReducer = (locationMenuOpen, action) => {
+	switch (action.type) {
+		case StoreActions.UPDATE_LOCATIONMENU_OPEN:
+			return action.payload;
+		default:
+			return locationMenuOpen;
+	}
+};
+
 // rating reducer==========================================
 export const ratingReducer = (rating, action) => {
 	switch (action.type) {
@@ -249,4 +262,5 @@ export const rootReducer = combineReducers({
 	collectionMenuOpen: collectionMenuOpenReducer,
 	colorMenuOpen: colorMenuOpenReducer,
 	categoryMenuOpen: categoryMenuOpenReducer,
+	locationMenuOpen: locationMenuOpenReducer,
 });

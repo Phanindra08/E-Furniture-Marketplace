@@ -6,6 +6,10 @@ import LoginCheckModal from "./LoginCheckModal.jsx";
 import Snackbar from '@mui/material/Snackbar';
 import ProductInfo from "./ProductInfo";
 import MakeOfferModal from "./MakeOfferModal.jsx";
+import "../styles/ProductInfos.css";
+import DeleteIcon from '@mui/icons-material/Delete';
+
+
 
 import { StoreContext, StoreActions } from "../store";
 import { LOCAL_STORAGE, APIEndPoints } from "../utils/config.js";
@@ -16,12 +20,13 @@ const ProductDetails = () => {
 	const isLoggedIn = store.state.isLoggedIn;
 	const user = store.state.user;
 	const productId = product._id;
-
+	
 	const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
 	const [showModal, setShowModal] = useState(false);
 	const [showCheckModal, setCheckModal] = useState(false);
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [submit, setSubmit] = useState(false);
+	const navigate = useNavigate(); // Hook for navigation
 
 	const [localProduct, setLocalProduct] = useState(product); // Local state to handle product updates
 
@@ -113,6 +118,33 @@ const ProductDetails = () => {
 		setSubmit(false);
 	}, [submit]);
 
+	const onDeleteProduct = async () => {
+        const confirmDelete = window.confirm(
+            `Are you sure you want to delete the product "${product.title}"? This action cannot be undone.`
+        );
+        if (!confirmDelete) return;
+
+        try {
+            const res = await fetch(`${APIEndPoints.DELETEPRODUCT}/${productId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
+                },
+            });
+
+            if (!res.ok) throw new Error("Failed to delete product");
+
+            alert("Product deleted successfully!");
+
+            // Redirect the user after deletion
+            navigate(PAGE_LINK.USERPRODUCTS, { replace: true }); // Navigate to the user's product list or another relevant page
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            alert("Failed to delete product. Please try again later.");
+        }
+    };
+
 	// add item to basket handler
 	const addItemToBasketHandler = () => {
 		if(!isLoggedIn) setCheckModal(true);
@@ -137,6 +169,9 @@ const ProductDetails = () => {
 					className="product-image"
 				/>
 				<div className="button-container">
+					<button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
+					{isLoggedIn && product.userId == userId && (
+						<>
 					{isLoggedIn && localProduct.userId === userId ? (
 						// Mark as Sold Button for Product Owner
 						!localProduct.sold ? (
@@ -154,14 +189,30 @@ const ProductDetails = () => {
 					)}
 					{isLoggedIn && localProduct.userId === userId && (
 						<Link
-							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`}
-							className="edit-product-btn"
-							state={{ product: localProduct }}
-						>
-							Edit Product Details
-						</Link>
-					)}
+							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`} 
+							className="make-offer-btn"
+							state={{ localProduct }}
+							>
+								Edit Product Details
+					</Link>
+					<button
+					className="delete-icon"
+					onClick={onDeleteProduct}
+					style={{
+						position: "absolute",
+						top: "10px",
+						right: "10px",
+						backgroundColor: "transparent",
+						border: "none",
+						cursor: "pointer",
+					}}
+				>
+					<DeleteIcon style={{ color: "black", fontSize: "24px" }} />
+				</button>
+				   </>
+				)}
 				</div>
+				{/* <CarouselImages /> */}
 			</div>
 			<div className="productInfo-container">
 				<h2 className="productInfo-title">{localProduct.title}</h2>

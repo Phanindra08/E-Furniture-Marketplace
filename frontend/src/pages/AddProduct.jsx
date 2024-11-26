@@ -26,24 +26,47 @@ function AddProduct({ mode }) {
     };
 
     const [formData, setFormData] = useState(productFormData);
+    const [image, setImage] = useState(null); // State for handling the selected image file
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]); // Store the selected file
+    };
+    const fileInputRef = useRef(null);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const method = mode === 'add' ? 'POST' : 'PUT';
-            const endpoint = mode === 'add' ? APIEndPoints.ADDPRODUCT : `${APIEndPoints.UPDATEPRODUCT}/${productId}`;
+            const method = mode === "add" ? "POST" : "PUT";
+            const endpoint = mode === "add" ? APIEndPoints.ADDPRODUCT : `${APIEndPoints.UPDATEPRODUCT}/${productId}`;
+            console.log("FormData:", formData);
+            console.log("Image:", image);
+
+            // Create a FormData object to include the image file and other fields
+            const formDataWithImage = new FormData();
+            formDataWithImage.append("title", formData.title);
+            formDataWithImage.append("description", formData.description);
+            formDataWithImage.append("category", formData.category);
+            formDataWithImage.append("price", formData.price);
+            formDataWithImage.append("location", formData.location);
+            if (image) {
+                formDataWithImage.append("img", image); // Append the selected file
+            }
+            for (let [key, value] of formDataWithImage.entries()) {
+                console.log(key, value);
+            }
+
             const res = await fetch(endpoint, {
                 method,
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
                 },
-                body: JSON.stringify(formData),
+                body: formDataWithImage,
             });
 
             console.log("res --",res)
@@ -53,16 +76,17 @@ function AddProduct({ mode }) {
 
             alert(`Product ${mode === 'add' ? 'added' : 'updated'} successfully!`);
             // Reset the form for add mode
-            
                 setFormData({
-                    title: '',
-                    description: '',
-                    category: '',
-                    price: '',
-                    location: '',
-                    img: '',
-                });
-            
+                title: "",
+                description: "",
+                category: "",
+                price: "",
+                location: "",
+            });
+            setImage(null); // Clear the image file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ""; // Reset the file input
+            }
         } catch (error) {
             console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} product:`, error);
         }
@@ -129,13 +153,13 @@ function AddProduct({ mode }) {
                             required
                             margin="normal"
                         />
-                        <TextField
-                            fullWidth
-                            placeholder="Image URL"
-                            name="img"
-                            value={formData.img}
-                            onChange={handleChange}
-                            margin="normal"
+                        {/* File Input for Image Upload */}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ marginTop: "1rem" }}
+                            required={mode === "add"} // Required for adding a new product
                         />
                         <Button
                             type="submit"

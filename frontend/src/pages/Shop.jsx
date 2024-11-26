@@ -3,6 +3,8 @@ import { useState, useEffect, useContext } from "react";
 import FilterProducts from "../components/FilterProducts";
 import Product from "../components/Product";
 import SearchShop from "../components/SearchShop";
+import { locationNames } from "../utils/utils";
+import { categoryNames } from "../utils/utils";
 
 import { APIEndPoints } from "../utils/config";
 import { StoreActions, StoreContext } from "../store";
@@ -18,20 +20,57 @@ const Shop = () => {
 		const data = store.state.filterData;
 		const price = store.state.priceValue;
 
-		const colors = data.color.join(",");
-		const categories = data.category.join(",");
-		const collections = data.collection.join(",");
+		//const colors = data.color.join(",");
+		const categories = data.category;
+		const location = data.location;
+		//const collections = data.collection.join(",");
 		let url = `${APIEndPoints.SHOP}?`;
 
 		if (data && price) {
-			if (data.color.length >= 1) {
-				url += `color=${colors}&`;
+			// if (data.color.length >= 1) {
+			// 	url += `color=${colors}&`;
+			// }
+			if (categories.length >= 1) {
+				if (categories.includes("Other")) {
+					// Remove "other" from data.category
+					//const excludedCategories = categoryNames.join(",");
+					const index = categories.indexOf("Other");
+					if (index > -1) {
+						categories.splice(index, 1); // Remove "other" from array
+					}
+					let excludedCategories = categoryNames.filter(loc => loc !== "Other").join(",");
+					// Check if there are still categories left
+					if (categories.length > 0) {
+						url += `category=${categories.join(",")}&excludedCategories=${excludedCategories}&`;
+					} else {
+						// Only "other" was in the category, so just exclude it
+						url += `excludedCategories=${excludedCategories}&`;
+					}
+				} else {
+				url += `category=${categories.join(",")}&`;
+				}
 			}
-			if (data.category.length >= 1) {
-				url += `category=${categories}&`;
-			}
-			if (data.collection.length >= 1) {
-				url += `collection=${collections}&`;
+			// if (data.collection.length >= 1) {
+			// 	url += `collection=${collections}&`;
+			// }
+			if (location.length >= 1) {
+				if (location.includes("Other")) {
+					// Remove "other" from data.location
+					const index = location.indexOf("Other");
+					if (index > -1) {
+						location.splice(index, 1); // Remove "other" from array
+					}
+					let excludedLocations = locationNames.filter(loc => loc !== "Other").join(",");
+					// Check if there are still locations left
+					if (location.length > 0) {
+						url += `location=${location.join(",")}&excludedLocations=${excludedLocations}&`;
+					} else {
+						// Only "other" was in the location, so just exclude it
+						url += `excludedLocations=${excludedLocations}&`;
+					}
+				} else {
+				url += `location=${location.join(",")}&`;
+				}
 			}
 			if (price) {
 				url += `price=${price}&`;

@@ -3,18 +3,21 @@ import { FaChevronDown } from "react-icons/fa";
 
 import "../styles/Shop.css";
 
-import FilterCollectionMenu from "./FilterCollectionMenu";
-import FilterColorMenu from "./FilterColorMenu";
+// import FilterCollectionMenu from "./FilterCollectionMenu";
+// import FilterColorMenu from "./FilterColorMenu";
 import FilterCategoryMenu from "./FilterCategoryMenu";
+import FilterLocationMenu from "./FilterLocationMenu";
 import FilterPrice from "./FilterPrice";
 
 import { StoreContext, StoreActions } from "../store";
 
 const FilterProducts = ({ submitFilterFormHandler, clearAllFilterHandler }) => {
 	const store = useContext(StoreContext);
-	const collectionMenuOpen = store.state.collectionMenuOpen;
-	const colorMenuOpen = store.state.colorMenuOpen;
+	//const collectionMenuOpen = store.state.collectionMenuOpen;
+	//const colorMenuOpen = store.state.colorMenuOpen;
 	const categoryMenuOpen = store.state.categoryMenuOpen;
+	const locationMenuOpen  = store.state?.locationMenuOpen ?? false;
+	;
 
 	return (
 		<>
@@ -26,45 +29,7 @@ const FilterProducts = ({ submitFilterFormHandler, clearAllFilterHandler }) => {
 			</div>
 
 			<form className="filter__collection" onSubmit={submitFilterFormHandler}>
-				{/* collection section */}
-				<div
-					className={
-						collectionMenuOpen
-							? "collection__menu removeBorder"
-							: "collection__menu"
-					}
-				>
-					<span>Collection</span>
-					<span
-						onClick={() =>
-							store.dispatch({
-								type: StoreActions.UPDATE_COLLECTIOMENU_OPEN,
-								payload: !collectionMenuOpen,
-							})
-						}
-					>
-						<FaChevronDown />
-					</span>
-				</div>
-				{collectionMenuOpen && <FilterCollectionMenu />}
-
-				{/* color section */}
-				<div
-					className={colorMenuOpen ? "color__menu removeBorder" : "color__menu"}
-				>
-					<span>Color</span>
-					<span
-						onClick={() =>
-							store.dispatch({
-								type: StoreActions.UPDATE_COLORMENU_OPEN,
-								payload: !colorMenuOpen,
-							})
-						}
-					>
-						<FaChevronDown />
-					</span>
-				</div>
-				{colorMenuOpen && <FilterColorMenu />}
+				
 
 				{/* category section */}
 				<div
@@ -85,6 +50,26 @@ const FilterProducts = ({ submitFilterFormHandler, clearAllFilterHandler }) => {
 					</span>
 				</div>
 				{categoryMenuOpen && <FilterCategoryMenu />}
+				{/* location section */}
+				<div
+					className={
+						locationMenuOpen ? "location__menu removeBorder" : "location__menu"
+					}
+				>
+					<span>Location</span>
+					<span
+						onClick={() =>
+							store.dispatch({
+								type: StoreActions.UPDATE_LOCATIONMENU_OPEN,
+								payload: !locationMenuOpen,
+							})
+						}
+					>
+						<FaChevronDown />
+					</span>
+				</div>
+				{locationMenuOpen && <FilterLocationMenu />}
+
 
 				{/* price section */}
 				<div className="price__menu">
