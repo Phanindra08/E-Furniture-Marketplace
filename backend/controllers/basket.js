@@ -5,7 +5,6 @@ import { HTTP_RESPONSE } from "../utils/config.js";
 // post item to user's basket===========================
 export const addItemsToBasket = async (req, res) => {
 	try {
-		console.log("try block")
 		const { userId, quantity, productId } = req.body;
 		const token = req.headers.authorization;
 		const decodedToken = jwt.decode(token);
@@ -31,7 +30,6 @@ export const addItemsToBasket = async (req, res) => {
 			let foundItem = basket.items.find((item) => {
 				return item.productId.toString() === productId;
 			});
-			console.log("foundItem",foundItem)
 			// if (foundItem) {
 			// 	// update the quantity of the existing item
 			// 	console.log("found item")

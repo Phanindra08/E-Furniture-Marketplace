@@ -2,31 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { TextField, Button, Typography, Card, CardContent, Grid } from '@mui/material';
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
+import Snackbar from '@mui/material/Snackbar';
 
 function AddProduct({ mode }) {
     const location = useLocation();
     const { product } = location?.state || {};
-    const productId = product?._id  || {};
-    const productFormData = mode=='EDIT' ? {
-        title: product.title,
-        description: product.description,
-        category: product.category,
-        price: product.price,
-        location: product.location,
-        img: product.img,
+    const productId = product?._id || {};
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        category: "",
+        price: "",
+        location: "",
+        img:"",
         sold: false
-    } : {
-        title: '',
-        description: '',
-        category: '',
-        price: '',
-        location: '',
-        img: '',
-        sold: false
-    };
-
-    const [formData, setFormData] = useState(productFormData);
+    });
     const [image, setImage] = useState(null); // State for handling the selected image file
+
+
+    useEffect(() => {
+        if(product){
+            const prefilledData = {
+                title: product.title,
+                description: product.description,
+                category: product.category,
+                price: product.price,
+                location: product.location,
+                img: product.img
+            };
+            setFormData(prefilledData);
+        }
+      }, [mode=='EDIT',product]);
+
+      const handleShowSnackbar = (val) => {
+		setIsSnackbarOpen(val);
+	  };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,8 +54,6 @@ function AddProduct({ mode }) {
         try {
             const method = mode === "add" ? "POST" : "PUT";
             const endpoint = mode === "add" ? APIEndPoints.ADDPRODUCT : `${APIEndPoints.UPDATEPRODUCT}/${productId}`;
-            console.log("FormData:", formData);
-            console.log("Image:", image);
 
             // Create a FormData object to include the image file and other fields
             const formDataWithImage = new FormData();
@@ -74,30 +83,35 @@ function AddProduct({ mode }) {
             const data = await res.json();
             console.log(`${mode === 'add' ? 'Product added' : 'Product updated'} successfully:`, data);
 
+            // alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
+            handleShowSnackbar(true);
+
             alert(`Product ${mode === 'add' ? 'added' : 'updated'} successfully!`);
             // Reset the form for add mode
                 setFormData({
-                title: "",
-                description: "",
-                category: "",
-                price: "",
-                location: "",
-            });
-            setImage(null); // Clear the image file input
-            if (fileInputRef.current) {
-                fileInputRef.current.value = ""; // Reset the file input
-            }
+                    title: "",
+                    description: "",
+                    category: "",
+                    price: "",
+                    location: "",
+                    img:"",
+                    sold: false
+                });
+                setImage(null); // Clear the image file input
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset the file input
+                }
         } catch (error) {
             console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} product:`, error);
         }
     };
 
     return (
-        <Grid container justifyContent="center" style={{ marginTop: '2rem' }}>
-            <Card style={{ maxWidth: 600, padding: '20px 5px' }}>
+        <Grid container justifyContent="center" style={{ marginTop: "2rem" }}>
+            <Card style={{ maxWidth: 600, padding: "20px 5px" }}>
                 <CardContent>
                     <Typography gutterBottom variant="h5">
-                        {mode === 'add' ? 'Add a New Product' : 'Edit Product Details'}
+                        {mode === "add" ? "Add a New Product" : "Edit Product Details"}
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <TextField
@@ -166,11 +180,21 @@ function AddProduct({ mode }) {
                             variant="contained"
                             color="primary"
                             fullWidth
-                            style={{ marginTop: '1rem' }}
+                            style={{ marginTop: "1rem" }}
                         >
-                            {mode === 'add' ? 'Add Product' : 'Update Product'}
+                            {mode === "add" ? "Add Product" : "Update Product"}
                         </Button>
                     </form>
+                    <Snackbar
+                        open={isSnackbarOpen}
+                        autoHideDuration={1000}
+                        onClose={() => handleShowSnackbar(false)}
+                        message={<div style={{ fontSize: "15px" }}>{`Product ${mode === "add" ? "added" : "updated"} successfully!`}</div>}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}
+			        />
                 </CardContent>
             </Card>
         </Grid>

@@ -8,10 +8,10 @@ import { User } from "../models/user.js";
 export const getAllProducts = async (req, res) => {
     try {
         const { category, excludedCategories, price, location, excludedLocations } = req.query; // Extract query parameters
-
+    
         // Initialize the filters array
         const filters = [];
-
+    
         // Location filter
         const locationConditions = [];
         if (location) {
@@ -40,7 +40,7 @@ export const getAllProducts = async (req, res) => {
         if (locationConditions.length) {
             filters.push({ $or: locationConditions });
         }
-
+    
         // Category filter
         const categoryConditions = [];
         if (category) {
@@ -69,7 +69,7 @@ export const getAllProducts = async (req, res) => {
         if (categoryConditions.length) {
             filters.push({ $or: categoryConditions });
         }
-
+    
         // Price filter
         if (price) {
             const numericPrice = Number(price);
@@ -79,7 +79,7 @@ export const getAllProducts = async (req, res) => {
                 });
             }
         }
-
+    
         // Combine all filters using $and
         const query = filters.length ? { $and: filters } : {};
 
@@ -139,7 +139,7 @@ export const getSearchValue = async (req, res) => {
 // Add a new product to the list ===============================
 export const addProduct = async (req, res) => {
     try {
-		const { title, description, price, category, img, location, sold } = req.body;
+		const { title, description, price, category, location, sold } = req.body;
 
         // Ensure the user is authenticated
         if (!req.user || !req.user.id) {
@@ -164,12 +164,12 @@ export const addProduct = async (req, res) => {
         } : null;
 
         // Create a new product instance
-		const newProduct = new Product({
+        const newProduct = new Product({
             title,
             description,
             price,
             category,
-            img,
+            img, // Use processed image
             location,
             userId: req.user.id,
             seller: username,
@@ -224,7 +224,6 @@ export const getMyProducts = async (req, res) => {
 
 // Update product details by ID 
 export const updateProductById = async (req, res) => {
-    console.log("updateProductById");
     try {
         const { productId } = req.params;
         const { title, description, price, category, location } = req.body;
