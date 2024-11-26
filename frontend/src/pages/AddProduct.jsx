@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TextField, Button, Typography, Card, CardContent, Grid } from "@mui/material";
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
+import Snackbar from '@mui/material/Snackbar';
 
 function AddProduct({ mode }) {
     const location = useLocation();
     const { product } = location?.state || {};
     const productId = product?._id || {};
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -31,6 +33,10 @@ function AddProduct({ mode }) {
             setFormData(prefilledData);
         }
       }, [mode=='EDIT',product]);
+
+      const handleShowSnackbar = (val) => {
+		setIsSnackbarOpen(val);
+	  };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -76,8 +82,9 @@ function AddProduct({ mode }) {
             const data = await res.json();
             console.log(`${mode === "add" ? "Product added" : "Product updated"} successfully:`, data);
 
-            alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
-
+            // alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
+            handleShowSnackbar(true);
+            
             // Reset the form for add mode
                 setFormData({
                     title: "",
@@ -87,10 +94,10 @@ function AddProduct({ mode }) {
                     location: "",
                     img:""
                 });
-            setImage(null); // Clear the image file input
-            if (fileInputRef.current) {
-                fileInputRef.current.value = ""; // Reset the file input
-            }
+                setImage(null); // Clear the image file input
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""; // Reset the file input
+                }
         } catch (error) {
             console.error(`Error ${mode === "add" ? "adding" : "updating"} product:`, error);
         }
@@ -175,6 +182,16 @@ function AddProduct({ mode }) {
                             {mode === "add" ? "Add Product" : "Update Product"}
                         </Button>
                     </form>
+                    <Snackbar
+                        open={isSnackbarOpen}
+                        autoHideDuration={1000}
+                        onClose={() => handleShowSnackbar(false)}
+                        message={<div style={{ fontSize: "15px" }}>{`Product ${mode === "add" ? "added" : "updated"} successfully!`}</div>}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}
+			        />
                 </CardContent>
             </Card>
         </Grid>
