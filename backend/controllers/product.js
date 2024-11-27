@@ -122,12 +122,12 @@ export const getSearchValue = async (req, res) => {
 		const { searchvalue } = req.params;
 		const products = await Product.find({
             $or: [
-              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } },
-              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } },
-              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } }
+              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } }
             ],
           });
-
+          
 		res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
 	} catch (err) {
 		res
@@ -137,9 +137,45 @@ export const getSearchValue = async (req, res) => {
 };
 
 // Add a new product to the list ===============================
+// export const addProduct = async (req, res) => {
+// 	try {
+// 		const { title, description, price, category, img, location } = req.body;
+		
+// 		if (!req.user || !req.user.id) {
+// 			return res.status(400).json({ message: "User not authenticated" });
+// 		}
+		
+// 		const username = await User.findById(req.user.id);
+// 		// Create a new product instance with the provided data
+// 		const newProduct = new Product({
+//             title,
+//             description,
+//             price,
+//             category,
+//             img,
+//             location,
+//             userId: req.user.id,
+//             seller: username
+//         });
+
+// 		// Save the new product to the database
+// 		const savedProduct = await newProduct.save();
+// 		// Respond with the newly created product
+// 		return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
+// 	} catch (error) {
+// 		// Handle errors
+// 		console.error("Detailed error:", error);
+// 		return res
+// 			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+// 			.json({ message: "Error adding product", error: error.message || error });
+// 	}
+// };
+
+
+
 export const addProduct = async (req, res) => {
     try {
-		const { title, description, price, category, location, sold } = req.body;
+        const { title, description, price, category, location } = req.body;
 
         // Ensure the user is authenticated
         if (!req.user || !req.user.id) {
@@ -171,22 +207,21 @@ export const addProduct = async (req, res) => {
             category,
             img, // Use processed image
             location,
-            userId: req.user.id,
-            seller: username,
-            sold
+            seller: user._id, // Use the user ID as ObjectId
+            userId: user._id, // If userId is a separate field
         });
 
-		// Save the new product to the database
+        // Save the product to the database
         const savedProduct = await newProduct.save();
-		// Respond with the newly created product
+
+        // Respond with the saved product
         return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
     } catch (error) {
-		// Handle errors
-		console.error("Detailed error:", error);
-		return res
-			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-			.json({ message: "Error adding product", error: error.message || error });
-	}
+        console.error("Detailed error:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Error adding product", error: error.message || error });
+    }
 };
 
 
@@ -218,9 +253,56 @@ export const getMyProducts = async (req, res) => {
         console.error("Detailed error:", error);
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-            .json({ message: "Error adding product", error: error.message || error });
+            .json({ message: "Error fetching products", error: error.message || error });
     }
 };
+
+
+// export const getMyProducts = async (req, res) => {
+//     try {
+//         // Ensure the user is authenticated
+//         if (!req.user || !req.user.id) {
+//             return res.status(400).json({ message: "User not authenticated" });
+//         }
+
+//         // Fetch the user document
+//         const user = await User.findById(req.user.id);
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+
+//         // Fetch products for the authenticated user
+//         const userProducts = await Product.find({ seller: user._id });
+
+//         if (!userProducts.length) {
+//             return res.status(404).json({ message: "No products found for this user" });
+//         }
+
+//         // Map the products to include image data as a base64 string
+//         const productsWithImages = userProducts.map((product) => {
+//             let imageUrl = null;
+//             if (product.img && product.img.data) {
+//                 // Convert image buffer to base64
+//                 const base64Image = product.img.data.toString("base64");
+//                 imageUrl = `data:${product.img.contentType};base64,${base64Image}`;
+//             }
+
+//             return {
+//                 ...product._doc, // Spread existing product fields
+//                 img: imageUrl, // Include the base64 image URL
+//             };
+//         });
+
+//         // Respond with the user's products, including images
+//         return res.status(200).json({ data: productsWithImages });
+//     } catch (error) {
+//         console.error("Detailed error:", error);
+//         return res
+//             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+//             .json({ message: "Error fetching user's products", error: error.message || error });
+//     }
+// };
+
 
 // Update product details by ID 
 export const updateProductById = async (req, res) => {
@@ -303,33 +385,5 @@ export const deleteProductById = async (req, res) => {
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
             .json({ message: "Failed to delete product", error: error.message });
-    }
-};
-
-export const markAsSold = async (req, res) => {
-    console.log("Marking product as sold");
-    try {
-        const { sold, productId, userId } = req.body;
-
-        // Find the product by ID and update it
-        const updatedProduct = await Product.findByIdAndUpdate(
-            productId,
-            { sold },
-            { new: true, runValidators: true } // Return the updated product and validate inputs
-        );
-
-        if (!updatedProduct) {
-            return res
-                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
-                .json({ message: "Product not found" });
-        }
-
-        // Return the updated product details
-        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: updatedProduct });
-    } catch (error) {
-        console.error("Error updating product details:", error);
-        return res
-            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-            .json({ message: "Failed to update product details", error: error.message });
     }
 };
