@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import UserProfile from "./pages/UserProfile";
 
 import { PAGE_LINK } from "./utils/config";
 import { initialState, StoreContext, rootReducer } from "./store";
@@ -35,8 +36,9 @@ const App = () => {
 					<Route path={PAGE_LINK.REGISTER} element={<Register />} />
 					<Route path={`${PAGE_LINK.SHOP}/:id`} element={<ProductInfos />} />
 					<Route path={PAGE_LINK.USERPRODUCTS} element={<UserProducts />} />
-					{/* <Route path={`${PAGE_LINK.USERPRODUCTS}/:id`} element={<ProductInfos nav={"MYPRODUCTS"} />} /> */}
 					<Route path={PAGE_LINK.BASKET} element={<Basket />} />
+					<Route path={`${PAGE_LINK.USERDETAILS}`} element={<UserProfile />} />
+
 				</Routes>
 			</main>
 			<Footer />

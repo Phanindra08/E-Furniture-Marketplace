@@ -1,7 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Link, useNavigate } from "react-router-dom";
-//import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PAGE_LINK } from "../utils/config";
 import LoginCheckModal from "./LoginCheckModal.jsx";
 import Snackbar from '@mui/material/Snackbar';
@@ -21,13 +20,15 @@ const ProductDetails = () => {
     const isLoggedIn = store.state.isLoggedIn;
     const user = store.state.user;
     const productId = product._id;
-    
+
     const userId = localStorage.getItem(LOCAL_STORAGE.USER_ID);
     const [showModal, setShowModal] = useState(false);
     const [showCheckModal, setCheckModal] = useState(false);
     const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
     const [submit, setSubmit] = useState(false);
     const navigate = useNavigate(); // Hook for navigation
+
+	const [localProduct, setLocalProduct] = useState(product); // Local state to handle product updates
 
     const onCloseModal = () => {
         setShowModal(false);
@@ -45,7 +46,44 @@ const ProductDetails = () => {
         setIsSnackbarOpen(val);
       };
 
-    // use effect for posting data to db
+	// Mark as Sold Handler
+	const markAsSoldHandler = async () => {
+		try {
+			const res = await fetch(`${APIEndPoints.MARKASSOLD}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
+				},
+				body: JSON.stringify({
+					sold: true, // Marking the product as sold
+					productId: productId,
+					userId: userId,
+				}),
+			});
+
+			if (res.ok) {
+				const updatedProduct = await res.json();
+
+				// Update the local state for immediate UI update
+				setLocalProduct({ ...localProduct, sold: true });
+
+				// Update the product in the store
+				store.dispatch({
+					type: StoreActions.UPDATE_PRODUCT,
+					payload: updatedProduct,
+				});
+
+				alert("Product marked as sold successfully!");
+			} else {
+				console.error("Failed to mark product as sold");
+			}
+		} catch (error) {
+			console.error("Error marking product as sold:", error);
+		}
+	};
+
+	// useEffect for adding product to basket
     useEffect(() => {
         // if user logged in
         if (submit) {
@@ -65,7 +103,6 @@ const ProductDetails = () => {
                     }),
                 });
                 const resData = await res.json();
-                console.log("resdata",resData)
                 const numberOfItems = resData.data.items;
                 // update number of items add to basket
                 store.dispatch({
@@ -126,14 +163,32 @@ const ProductDetails = () => {
         <section className="product-item">
             <div className="productImg-container">
                 <img
-                    src={product.img}
-                    alt={product.title}
+					src={localProduct.img}
+					alt={localProduct.title}
                     loading="lazy"
                     className="product-image"
                 />
                 {isLoggedIn && product.userId != userId && <div className="button-container">
                     <button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
-                </div>}         
+					{isLoggedIn && localProduct.userId == userId && (
+						<>
+					{isLoggedIn && localProduct.userId === userId ? (
+						// Mark as Sold Button for Product Owner
+						!localProduct.sold ? (
+							<button className="mark-as-sold-btn" onClick={markAsSoldHandler}>
+								Mark as Sold
+							</button>
+						) : (
+							<div className="sold-status">Product has been sold</div>
+						)
+					) : (
+						// Make an Offer Button for Other Users
+						<button className="make-offer-btn" onClick={onClickMakeOffer}>
+							Make an Offer
+						</button>
+					)}
+					{isLoggedIn && localProduct.userId === userId && (
+                </div>}
             </div>
             <div className="productInfo-container">
                 <h2 className="productInfo-title">{product.title}</h2>
@@ -147,16 +202,19 @@ const ProductDetails = () => {
                         Add to Wishlist
                     </button>
                 </div> : <div style={{ display:'flex', columnGap: '20px', margin: '20px', textDecoration: 'underline', alignItems:'center'}}>
-                        <Link 
+						<Link
                             style={{ fontSize: '15px'}}
-                            to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`} 
-                            state={{ product }}
+							to={`${PAGE_LINK.UPDATEPRODUCT}/${productId}`}
+							className="make-offer-btn"
+							state={{ localProduct }}
                             >
                                 Edit Product
                         </Link>
-                        <button 
+                        <button
+					<button
                             onClick={onDeleteProduct}
                             style={{
+					style={{
                                 backgroundColor: "transparent",
                                 border: "none",
                                 cursor: "pointer",
@@ -164,19 +222,42 @@ const ProductDetails = () => {
                             }}
                         > Delete Product
                         </button>
+				   </>
+				)}
+				</div>
+				{/* <CarouselImages /> */}
+			</div>
+			<div className="productInfo-container">
+				<h2 className="productInfo-title">{localProduct.title}</h2>
+				<div className="stars">
+					<div>{`Product Seller: ${
+						localProduct.seller ? localProduct.seller.username : ""
+					}`}</div>
+				</div>
+				<h3 className="productInfo-price">£{localProduct.price}</h3>
+				<ProductInfo description={localProduct.description} />
+				{localProduct.userId !== userId && (
+					<div className="productInfo-select">
+						<button className="add-btn" onClick={addItemToBasketHandler}>
+							Add to Wishlist
+						</button>
                    </div>)}
 
 
                 <div></div>
-            </div>
-            {showModal && 
-            <MakeOfferModal 
-                onCloseModal={onCloseModal} 
-                handleShowSnackbar={handleShowSnackbar}
-                sellerEmail={product.seller.email} 
-                userEmail={user.email}
-                productTitle={product.title}
-                productPrice={product.price} />}
+					</div>
+				)}
+			</div>
+			{showModal && (
+				<MakeOfferModal
+					onCloseModal={onCloseModal}
+					handleShowSnackbar={handleShowSnackbar}
+					sellerEmail={localProduct.seller.email}
+					userEmail={user.email}
+					productTitle={localProduct.title}
+					productPrice={localProduct.price}
+				/>
+			)}
 
             {showCheckModal && <LoginCheckModal  onCloseModal={onCloseCheckModal} />}
 
@@ -184,7 +265,7 @@ const ProductDetails = () => {
                 open={isSnackbarOpen}
                 autoHideDuration={1000}
                 onClose={() => handleShowSnackbar(false)}
-                message={<div style={{ fontSize: "15px" }}>{"Your offer has been successfully sent to the seller!"}</div>}
+				message={<div style={{ fontSize: "15px" }}>{"Your offer has been successfully sent to the seller!"}</div>}
                 anchorOrigin={{
                     vertical: "top",
                     horizontal: "center",

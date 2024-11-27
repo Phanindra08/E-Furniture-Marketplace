@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { TextField, Button, Typography, Card, CardContent, Grid } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { TextField, Button, Typography, Card, CardContent, Grid } from '@mui/material';
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
 import Snackbar from '@mui/material/Snackbar';
 
@@ -15,7 +15,8 @@ function AddProduct({ mode }) {
         category: "",
         price: "",
         location: "",
-        img:""
+        img:"",
+        sold: false
     });
     const [image, setImage] = useState(null); // State for handling the selected image file
 
@@ -71,17 +72,21 @@ function AddProduct({ mode }) {
             const res = await fetch(endpoint, {
                 method,
                 headers: {
-                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN), // No Content-Type for FormData
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
                 },
                 body: formDataWithImage,
             });
 
-            if (!res.ok) throw new Error(`Failed to ${mode === "add" ? "add" : "update"} product`);
+            console.log("res --",res)
+            if (!res.ok) throw new Error(`Failed to ${mode === 'add' ? 'add' : 'update'} product`);
             const data = await res.json();
+            console.log(`${mode === 'add' ? 'Product added' : 'Product updated'} successfully:`, data);
 
             // alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
             handleShowSnackbar(true);
-            
+
+            alert(`Product ${mode === 'add' ? 'added' : 'updated'} successfully!`);
             // Reset the form for add mode
                 setFormData({
                     title: "",
@@ -89,14 +94,15 @@ function AddProduct({ mode }) {
                     category: "",
                     price: "",
                     location: "",
-                    img:""
+                    img:"",
+                    sold: false
                 });
                 setImage(null); // Clear the image file input
                 if (fileInputRef.current) {
                     fileInputRef.current.value = ""; // Reset the file input
                 }
         } catch (error) {
-            console.error(`Error ${mode === "add" ? "adding" : "updating"} product:`, error);
+            console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} product:`, error);
         }
     };
 
