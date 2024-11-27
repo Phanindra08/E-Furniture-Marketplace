@@ -18,7 +18,6 @@ const productSchema = new Schema({
     location: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    sold: {type: Boolean, required: true}
 });
 
 export const Product = mongoose.model("Product", productSchema);
