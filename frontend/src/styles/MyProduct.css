@@ -1,5 +1,4 @@
 .product-container {
-    margin: 50px;
     grid-column: 2 / -1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
