@@ -81,7 +81,7 @@
 .clear-container {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: baseline;
 }
 .clear-btn {
 	cursor: pointer;
@@ -117,6 +117,7 @@
 	flex-direction: column;
 	background-color: #ddd8d5;
 	padding: 2rem;
+	border-radius: 8px;
 }
 .filter-container h2 {
 	font-size: 2rem;

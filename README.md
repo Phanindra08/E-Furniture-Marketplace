@@ -25,11 +25,15 @@ The user has a specific item in mind that they want to purchase, so they use the
 
 5. #### Explore and Learn: (View Product Details) ####
 The user finds an item they like and clicks on it to see more details, including multiple photos, a description, and customer reviews.
+</br>
 
 6. #### Edit Your Wishlist: (Remove or Add items in wishlist) ####
 The user realizes they accidentally added the wrong item to their wishlist, so they navigate back to the wishlist and remove the unwanted item from their wishlist.
 </br>
 
+7. #### Make an Offer: (Negotiate with Seller) ####
+The user has an option to negotiate the price of the product they wish to buy with the seller of the product. They can enter the new price they wish to buy the product and send the new price to seller for approval
+</br>
 
 ## Methods Used
 - Navigate UI with **react-router**.

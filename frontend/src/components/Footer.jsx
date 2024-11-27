@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 
@@ -10,7 +11,7 @@ const Footer = () => {
 		<footer className="footer-container">
 			<div className="footer">
 				<div className="footer__logo">
-					<img src="../assets/images/logo.svg" alt="logo" />
+					<strong>FurniTrade</strong>
 				</div>
 
 				<ul className="footer__lists">
@@ -31,10 +32,14 @@ const Footer = () => {
 
 				<div className="footer__icon">
 					<p>
-						<FaFacebook />
+						<a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+							<FaFacebook />
+						</a>
 					</p>
 					<p>
-						<FaInstagram />
+						<a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+							<FaInstagram />
+						</a>
 					</p>
 				</div>
 			</div>
