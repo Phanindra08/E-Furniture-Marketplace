@@ -37,6 +37,44 @@ const ProductDetails = () => {
         setCheckModal(false);
     }
 
+    const handleSubmitOffer = async (offerPrice) => {
+        const sellerEmail=product.seller.email;
+        const userEmail=user.email
+        const productTitle=product.title
+        const productPrice=product.price
+
+        if (offerPrice <= 0 || isNaN(offerPrice) || productPrice<offerPrice) {
+          alert('Please enter a valid offer price.');
+          return;
+        }
+
+        try {
+          // Send the offer to the backend API to trigger the email
+          const response = await fetch(`${APIEndPoints.MAKEOFFER}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userEmail,
+              productTitle,
+              offerPrice,
+              sellerEmail,
+            }),
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+             
+            onCloseModal();
+            handleShowSnackbar(true);
+          } else {
+            alert('Failed to send offer');
+          }
+        } catch (error) {
+          console.error('Error sending offer:', error);
+          alert('An error occurred while submitting your offer.');
+        }
+      };
+
     const onClickMakeOffer = () => {
         if(!isLoggedIn) setCheckModal(true);
         else setShowModal(true);
@@ -133,7 +171,8 @@ const ProductDetails = () => {
                 />
                 {isLoggedIn && product.userId != userId && <div className="button-container">
                     <button className="make-offer-btn" onClick={onClickMakeOffer}>Make an Offer</button>
-                </div>}         
+                    <button className="make-offer-btn" onClick={()=>handleSubmitOffer(product.price)}>Buy Product now</button>
+                </div>}        
             </div>
             <div className="productInfo-container">
                 <h2 className="productInfo-title">{product.title}</h2>
@@ -172,11 +211,7 @@ const ProductDetails = () => {
             {showModal && 
             <MakeOfferModal 
                 onCloseModal={onCloseModal} 
-                handleShowSnackbar={handleShowSnackbar}
-                sellerEmail={product.seller.email} 
-                userEmail={user.email}
-                productTitle={product.title}
-                productPrice={product.price} />}
+                handleSubmitOffer={handleSubmitOffer} />}
 
             {showCheckModal && <LoginCheckModal  onCloseModal={onCloseCheckModal} />}
 
