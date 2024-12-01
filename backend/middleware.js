@@ -9,6 +9,7 @@ export const isLoggedIn= (req, res, next) => {
 
 	try {
 		const verified = jwt.verify(token, process.env.SECRET);
+		console.log(verified);
 		req.user = verified;
 		next();
 	} catch (err) {

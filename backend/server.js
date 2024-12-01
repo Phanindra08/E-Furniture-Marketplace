@@ -1,9 +1,8 @@
 import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
-
+import cors from 'cors';
 import userRouter from "./routes/user.js";
 import initProductRouter from "./routes/init.js";
 import featuredItemsRouter from "./routes/featuredItems.js";
@@ -15,6 +14,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 const dbUrl = process.env.DB_URL;
 const mongoUrl = process.env.MONGO_URI;
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,97 +1,107 @@
 import { User } from "../models/user.js";
 import {
-    hashPassword,
-    createToken,
-    checkPasswordMatch,
+	hashPassword,
+	createToken,
+	checkPasswordMatch,
 } from "../utils/auth.js";
 import { HTTP_RESPONSE } from "../utils/config.js";
 
-// Helper: Create user object without password
-const createUserWithoutPass = async (user) => ({
-    username: user.username,
-    email: user.email,
-    id: user.id,
-});
-
-// Register User
-export const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-        return res
-            .status(HTTP_RESPONSE.BAD_REQUEST.CODE)
-            .json({ error: "All fields are required: username, email, password" });
-    }
-
-    try {
-        // Check if email is already registered
-        const registeredUser = await User.findOne({ email });
-        if (registeredUser) {
-            return res
-                .status(HTTP_RESPONSE.BAD_REQUEST.CODE)
-                .json({ error: "A user has already registered with this email address." });
-        }
-
-        // Hash password and create user
-        const passwordHashed = await hashPassword(password);
-        const newUser = new User({
-            username,
-            email,
-            password: passwordHashed,
-        });
-
-        await newUser.save();
-        const userWithoutPassword = await createUserWithoutPass(newUser);
-        const token = await createToken({ id: userWithoutPassword.id });
-
-        return res
-            .status(HTTP_RESPONSE.OK.CODE)
-            .json({ data: userWithoutPassword, token });
-    } catch (err) {
-        console.error("Error inside registerUser:", err);
-        return res.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE).json({
-            error: "An error occurred while registering the user.",
-        });
-    }
+// create user without password=============================
+const createUserWithoutPass = async (user) => {
+	const newUser = {
+		username: user.username,
+		email: user.email,
+		id: user.id,
+	};
+	return newUser;
 };
 
-// Log In User
-export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+// create user=============================================
+export const registerUser = async (req, res) => {
+	const { username, email, password } = req.body;
 
-    if (!email || !password) {
+	if (!username || !email || !password) {
+		return res
+			.status(HTTP_RESPONSE.BAD_REQUEST.CODE)
+			.json({ error: "The fields username, email, password are required." });
+	}
+
+	const passwordHashed = await hashPassword(password);
+
+	try {
+		//check to make sure the email provided not registered
+		const registeredUser = await User.findOne({ email: email });
+
+		if (registeredUser) {
+			// throw an error if the email address already registered
+			return res
+				.status(HTTP_RESPONSE.BAD_REQUEST.CODE)
+				.json({
+					error: "A user has already registered with this email address.",
+				});
+		} else {
+			// create a new user
+			const newUser = new User({
+				username,
+				email,
+				password: passwordHashed,
+			});
+
+			await newUser.save();
+
+			const userWithoutPassword = await createUserWithoutPass(newUser);
+			const token = await createToken({ id: userWithoutPassword.id });
+
+			return res
+				.status(HTTP_RESPONSE.OK.CODE)
+				.json({ data: userWithoutPassword, token });
+		}
+	} catch (err) {
+		console.log("Error while registering a user!", err);
+	}
+};
+
+// log in user==================================================
+export const loginUser = async (req, res) => {
+	const { email, password } = req.body;
+
+	if (!email || !password) {
         return res
             .status(HTTP_RESPONSE.BAD_REQUEST.CODE)
             .json({ error: "Email and password are required." });
     }
 
-    try {
-        const foundUser = await User.findOne({ email });
-        if (!foundUser) {
-            return res
-                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
-                .json({ error: "Invalid email or password." });
-        }
+	try {
+		const foundUser = await User.findOne({ email });
+		if (!foundUser) {
+			return res
+				.status(HTTP_RESPONSE.NOT_FOUND.CODE)
+				.json({ error: "Invalid email or password..." });
+		}
 
-        const matchedPassword = await checkPasswordMatch(password, foundUser.password);
-        if (!matchedPassword) {
-            return res
-                .status(HTTP_RESPONSE.UNAUTHORIZED.CODE)
-                .json({ error: "Invalid email or password." });
-        }
+		// check password match
+		const matchedPassword = await checkPasswordMatch(
+			password,
+			foundUser.password
+		);
+		if (!matchedPassword) {
+			return res
+				.status(HTTP_RESPONSE.UNAUTHORIZED.CODE)
+				.json({ error: "Invalid email or password..." });
+		}
 
-        const userWithoutPassword = await createUserWithoutPass(foundUser);
-        const token = await createToken({ id: userWithoutPassword.id });
+		const userWithoutPassword = await createUserWithoutPass(foundUser);
+		const token = await createToken({ id: userWithoutPassword.id });
 
-        return res
-            .status(HTTP_RESPONSE.OK.CODE)
-            .json({ data: userWithoutPassword, token });
-    } catch (err) {
-        console.error("Error inside loginUser:", err);
-        return res.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE).json({
-            error: "An error occurred during login.",
-        });
-    }
+		return res
+			.status(HTTP_RESPONSE.OK.CODE)
+			.json({ data: userWithoutPassword, token });
+	} catch (err) {
+		console.log("An error inside user login.", err);
+		return res
+			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+			.json(HTTP_RESPONSE.INTERNAL_ERROR.MESSAGE);
+	}
 };
 
 // Get User by ID

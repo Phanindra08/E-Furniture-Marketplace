@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { TextField, Button, Typography, Card, CardContent, Grid } from '@mui/material';
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { TextField, Button, Typography, Card, CardContent, Grid } from "@mui/material";
 import { APIEndPoints, LOCAL_STORAGE } from "../utils/config";
 import Snackbar from '@mui/material/Snackbar';
 
@@ -73,20 +73,17 @@ function AddProduct({ mode }) {
                 method,
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN),
+                    Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN), // No Content-Type for FormData
                 },
                 body: formDataWithImage,
             });
 
-            console.log("res --",res)
-            if (!res.ok) throw new Error(`Failed to ${mode === 'add' ? 'add' : 'update'} product`);
+            if (!res.ok) throw new Error(`Failed to ${mode === "add" ? "add" : "update"} product`);
             const data = await res.json();
-            console.log(`${mode === 'add' ? 'Product added' : 'Product updated'} successfully:`, data);
 
             // alert(`Product ${mode === "add" ? "added" : "updated"} successfully!`);
             handleShowSnackbar(true);
-
-            alert(`Product ${mode === 'add' ? 'added' : 'updated'} successfully!`);
+            
             // Reset the form for add mode
                 setFormData({
                     title: "",
@@ -102,7 +99,7 @@ function AddProduct({ mode }) {
                     fileInputRef.current.value = ""; // Reset the file input
                 }
         } catch (error) {
-            console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} product:`, error);
+            console.error(`Error ${mode === "add" ? "adding" : "updating"} product:`, error);
         }
     };
 

@@ -140,6 +140,7 @@ const Shop = () => {
 			const res = await fetch(`${APIEndPoints.SHOP}/`);
 			const products = await res.json();
 			setProducts(products.data);
+			console.log(products.data);
 		} catch (error) {
 			console.error("error", error);
 		}

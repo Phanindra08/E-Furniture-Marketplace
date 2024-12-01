@@ -16,6 +16,7 @@ const ProductInfos = () => {
 	useEffect(() => {
 		if (location.state) {
 			const { item } = location.state;
+			console.log("Hi Product Info: ", item);
 			store.dispatch({ type: StoreActions.UPDATE_PRODUCT, payload: item });
 		}
 		// eslint-disable-next-line

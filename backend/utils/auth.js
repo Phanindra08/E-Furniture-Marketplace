@@ -8,7 +8,7 @@ export const hashPassword = async (password) => {
 };
 
 export const createToken = async (payload) => {
-	return jwt.sign(payload, secret);
+	return jwt.sign(payload, secret, { expiresIn: '1h' });
 };
 
 export const checkPasswordMatch = async (password, hashedPassword) => {

@@ -113,21 +113,18 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-
-
-
 // get search value
 export const getSearchValue = async (req, res) => {
 	try {
 		const { searchvalue } = req.params;
 		const products = await Product.find({
             $or: [
-              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } },
-              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } },
-              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i', sold: false } }
-            ],
+              { title: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { category: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } },
+              { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } }
+            ], sold: false
           });
-
+          
 		res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
 	} catch (err) {
 		res
@@ -136,10 +133,9 @@ export const getSearchValue = async (req, res) => {
 	}
 };
 
-// Add a new product to the list ===============================
 export const addProduct = async (req, res) => {
     try {
-		const { title, description, price, category, location, sold } = req.body;
+        const { title, description, price, category, location, sold } = req.body;
 
         // Ensure the user is authenticated
         if (!req.user || !req.user.id) {
@@ -171,24 +167,22 @@ export const addProduct = async (req, res) => {
             category,
             img, // Use processed image
             location,
-            userId: req.user.id,
-            seller: username,
-            sold
+            seller: user._id, // Use the user ID as ObjectId
+            userId: user._id, // If userId is a separate field
         });
 
-		// Save the new product to the database
+        // Save the new product to the database
         const savedProduct = await newProduct.save();
-		// Respond with the newly created product
+
+        // Respond with the newly created product
         return res.status(HTTP_RESPONSE.OK.CODE).json({ data: savedProduct });
     } catch (error) {
-		// Handle errors
-		console.error("Detailed error:", error);
-		return res
-			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-			.json({ message: "Error adding product", error: error.message || error });
-	}
+        console.error("Detailed error:", error);
+        return res
+            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+            .json({ message: "Error adding product", error: error.message || error });
+    }
 };
-
 
 
 export const getMyProducts = async (req, res) => {
@@ -218,8 +212,37 @@ export const getMyProducts = async (req, res) => {
         console.error("Detailed error:", error);
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-            .json({ message: "Error adding product", error: error.message || error });
+            .json({ message: "Error fetching products", error: error.message || error });
     }
+};
+
+export const getProductById = async (req, res) => {
+	try {
+		const { productId } = req.params;
+		const products = await Product.find({_id: productId});
+        
+        const productsWithImages = products.map(product => {
+            let imgBase64 = null;
+
+            if (product.img && product.img.data) {
+                // Convert Buffer to Base64 and include the MIME type
+                imgBase64 = `data:${product.img.contentType};base64,${product.img.data.toString('base64')}`;
+            }
+
+            // Return the product with the Base64 image
+            return {
+                ...product._doc, // Spread the document properties
+                img: imgBase64,  // Replace `img` with the Base64 string
+            };
+        });
+
+        // Send the modified products array as the response
+        return res.status(HTTP_RESPONSE.OK.CODE).json(productsWithImages);
+	} catch (err) {
+		res
+			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
+			.json(HTTP_RESPONSE.INTERNAL_ERROR.MESSAGE);
+	}
 };
 
 // Update product details by ID 

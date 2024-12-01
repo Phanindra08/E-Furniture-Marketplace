@@ -5,13 +5,14 @@ export const APIEndPoints = {
 	REGISTER: "http://localhost:5000/user/register",
 	SHOP: "http://localhost:5000/products",
 	HOME: "http://localhost:5000/featuredItems",
+	GETPRODUCT: "http://localhost:5000/products/getProduct",
 	ADDPRODUCT: "http://localhost:5000/products/addProduct",
 	UPDATEPRODUCT: "http://localhost:5000/products/updateProduct",
 	MYPRODUCTS: "http://localhost:5000/products/myProducts",
 	DELETEPRODUCT: "http://localhost:5000/products/deleteProduct",
 	USERDETAILS: "http://localhost:5000/user/details",
-    	UPDATEUSERDETAILS: "http://localhost:5000/user/updateProfile",
-    	MARKASSOLD: "http://localhost:5000/products/markAsSold"
+    UPDATEUSERDETAILS: "http://localhost:5000/user/updateProfile",
+    MARKASSOLD: "http://localhost:5000/products/markAsSold"
 };
 
 export const PAGE_LINK = {
