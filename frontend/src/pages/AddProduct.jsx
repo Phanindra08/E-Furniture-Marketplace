@@ -15,8 +15,7 @@ function AddProduct({ mode }) {
         category: "",
         price: "",
         location: "",
-        img:"",
-        sold: false
+        img:""
     });
     const [image, setImage] = useState(null); // State for handling the selected image file
 
@@ -72,7 +71,6 @@ function AddProduct({ mode }) {
             const res = await fetch(endpoint, {
                 method,
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: localStorage.getItem(LOCAL_STORAGE.TOKEN), // No Content-Type for FormData
                 },
                 body: formDataWithImage,
@@ -91,8 +89,7 @@ function AddProduct({ mode }) {
                     category: "",
                     price: "",
                     location: "",
-                    img:"",
-                    sold: false
+                    img:""
                 });
                 setImage(null); // Clear the image file input
                 if (fileInputRef.current) {

@@ -24,6 +24,7 @@ export const registerUser = async (req, res) => {
 		return res
 			.status(HTTP_RESPONSE.BAD_REQUEST.CODE)
 			.json({ error: "The fields username, email, password are required." });
+
 	}
 
 	const passwordHashed = await hashPassword(password);
@@ -37,7 +38,7 @@ export const registerUser = async (req, res) => {
 			return res
 				.status(HTTP_RESPONSE.BAD_REQUEST.CODE)
 				.json({
-					error: "A user has already registered with this email address.",
+					email: "A user has already registered with this email address."
 				});
 		} else {
 			// create a new user
@@ -49,27 +50,21 @@ export const registerUser = async (req, res) => {
 
 			await newUser.save();
 
-			const userWithoutPassword = await createUserWithoutPass(newUser);
-			const token = await createToken({ id: userWithoutPassword.id });
+			const userWithoutpassword = await createUserWithoutPass(newUser);
+			const token = await createToken({ id: userWithoutpassword.id });
 
 			return res
 				.status(HTTP_RESPONSE.OK.CODE)
-				.json({ data: userWithoutPassword, token });
+				.json({ data: userWithoutpassword, token });
 		}
 	} catch (err) {
-		console.log("Error while registering a user!", err);
+		console.log("error inside register user!", err);
 	}
 };
 
 // log in user==================================================
 export const loginUser = async (req, res) => {
 	const { email, password } = req.body;
-
-	if (!email || !password) {
-        return res
-            .status(HTTP_RESPONSE.BAD_REQUEST.CODE)
-            .json({ error: "Email and password are required." });
-    }
 
 	try {
 		const foundUser = await User.findOne({ email });

@@ -133,6 +133,7 @@ export const getSearchValue = async (req, res) => {
 	}
 };
 
+
 export const addProduct = async (req, res) => {
     try {
         const { title, description, price, category, location, sold } = req.body;
@@ -245,6 +246,7 @@ export const getProductById = async (req, res) => {
 	}
 };
 
+
 // Update product details by ID 
 export const updateProductById = async (req, res) => {
     try {
@@ -326,33 +328,5 @@ export const deleteProductById = async (req, res) => {
         return res
             .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
             .json({ message: "Failed to delete product", error: error.message });
-    }
-};
-
-export const markAsSold = async (req, res) => {
-    console.log("Marking product as sold");
-    try {
-        const { sold, productId, userId } = req.body;
-
-        // Find the product by ID and update it
-        const updatedProduct = await Product.findByIdAndUpdate(
-            productId,
-            { sold },
-            { new: true, runValidators: true } // Return the updated product and validate inputs
-        );
-
-        if (!updatedProduct) {
-            return res
-                .status(HTTP_RESPONSE.NOT_FOUND.CODE)
-                .json({ message: "Product not found" });
-        }
-
-        // Return the updated product details
-        return res.status(HTTP_RESPONSE.OK.CODE).json({ data: updatedProduct });
-    } catch (error) {
-        console.error("Error updating product details:", error);
-        return res
-            .status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)
-            .json({ message: "Failed to update product details", error: error.message });
     }
 };
