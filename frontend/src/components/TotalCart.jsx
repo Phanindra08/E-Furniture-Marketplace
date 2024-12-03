@@ -43,11 +43,11 @@ const TotalCart = () => {
 							</span>
 						</p>
 					</div>
-					<p className="delivery-price">£39</p>
+					<p className="delivery-price">$39</p>
 				</div>
 				<div className="total-section">
 					<p>{`Subtotal (${basketItems.length} item)`}</p>
-					<p>£{total}</p>
+					<p>${total}</p>
 				</div>
 			</div>
 			<Link

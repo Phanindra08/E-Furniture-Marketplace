@@ -24,7 +24,7 @@ const Product = ({ item }) => {
           })}
           <span>{getRating(item.rating)}</span>
         </div> */}
-        <p className="product__price">£{item.price}</p>
+        <p className="product__price">${item.price}</p>
       </div>
       <Link
         className="product__btn"
