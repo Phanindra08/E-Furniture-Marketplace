@@ -120,4 +120,3 @@ Once both the frontend and backend are running, you should be able to access the
 ### Tips:
 - **Frontend Errors**: If you encounter any issues with the frontend, check the browser console for error messages.
 - **Backend Errors**: If the backend fails to start, check the terminal for any missing dependencies or configuration issues.
-
