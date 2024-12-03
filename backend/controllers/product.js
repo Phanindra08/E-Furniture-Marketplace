@@ -127,8 +127,21 @@ export const getSearchValue = async (req, res) => {
               { location: { $regex: `${searchvalue.replace(/\s/g, "\\s*")}`, $options: 'i' } }
             ],
           });
-          
-		res.status(HTTP_RESPONSE.OK.CODE).json({ data: products });
+          const productsWithImages = products.map(product => {
+            let imgBase64 = null;
+
+            if (product.img && product.img.data) {
+                // Convert Buffer to Base64 and include the MIME type
+                imgBase64 = `data:${product.img.contentType};base64,${product.img.data.toString('base64')}`;
+            }
+
+            // Return the product with the Base64 image
+            return {
+                ...product._doc, // Spread the document properties
+                img: imgBase64,  // Replace `img` with the Base64 string
+            };
+        });
+		res.status(HTTP_RESPONSE.OK.CODE).json({ data: productsWithImages });
 	} catch (err) {
 		res
 			.status(HTTP_RESPONSE.INTERNAL_ERROR.CODE)

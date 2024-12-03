@@ -23,9 +23,9 @@ const FilterProducts = ({ submitFilterFormHandler, clearAllFilterHandler }) => {
 		<>
 			<div className="clear-container">
 				<h2>Filtered by</h2>
-				<button className="clear-btn" onClick={clearAllFilterHandler}>
+				{/* <button className="clear-btn" onClick={clearAllFilterHandler}>
 					Clear All
-				</button>
+				</button> */}
 			</div>
 
 			<form className="filter__collection" onSubmit={submitFilterFormHandler}>
