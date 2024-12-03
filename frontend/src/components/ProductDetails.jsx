@@ -179,7 +179,7 @@ const ProductDetails = () => {
                 <div className="stars">
                     <div>{`Product Seller: ${product.seller ? product.seller.username : ''}`}</div>
                 </div>
-                <h3 className="productInfo-price">£{product.price}</h3>
+                <h3 className="productInfo-price">${product.price}</h3>
                 <ProductInfo description={product.description}/>
                 {isLoggedIn && (product.userId != userId ? <div className="productInfo-select">
                     <button className="add-btn" onClick={addItemToBasketHandler}>

@@ -80,8 +80,8 @@ const CartItem = ({ item }) => {
 					<p>{item?.productId?.title}</p>
 				</div>
 			</div>
-			<p>£{item.productId.price}</p>
-			<p>£{Number(item.quantity * item.productId.price).toFixed(2)}</p>
+			<p>${item.productId.price}</p>
+			<p>${Number(item.quantity * item.productId.price).toFixed(2)}</p>
 			<p><FaTrash size={20} color="red" onClick={()=>removeItem(item)} style={{ cursor: 'pointer'}}/></p>	
 			
 		</div> : <></>}</>

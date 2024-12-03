@@ -28,7 +28,7 @@ const FilterCollectionMenu = () => {
 
 	// check Checkbox Handler ================================
 	const checkCheckboxHandler = (collectionName) => {
-		return store.state.filterData.collection.includes(collectionName)
+		return store.state.filterData.collection?.includes(collectionName)
 			? true
 			: false;
 	};

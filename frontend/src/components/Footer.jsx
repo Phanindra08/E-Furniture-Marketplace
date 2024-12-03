@@ -26,7 +26,7 @@ const Footer = () => {
 						</Link>
 					</li>
 					<li className="footer__lists--item">
-						<Link to={PAGE_LINK.CONTACT}>Contact</Link>
+						<Link to={PAGE_LINK.HOME}>Contact</Link>
 					</li>
 				</ul>
 

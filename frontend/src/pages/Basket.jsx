@@ -60,7 +60,7 @@ const Basket = () => {
 				Shopping Cart <span>: {basketItems.length} items</span>
 			</h1>
 			<h1>
-			   TotalPrice <span>: £{totalPrice} </span>
+			   TotalPrice <span>: ${totalPrice} </span>
 			</h1>
 			{basketItems.length < 1 ? (
 				<EmptyBasket />

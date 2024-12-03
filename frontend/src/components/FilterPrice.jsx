@@ -38,7 +38,7 @@ const FilterPrice = () => {
 			</div>
 			<div className="price-text">
 				<div className="min-text">
-					<span>£</span>
+					<span>$</span>
 					<input
 						type="number"
 						defaultValue="0"
@@ -48,7 +48,7 @@ const FilterPrice = () => {
 					/>
 				</div>
 				<div className="max-text">
-					<span>£</span>
+					<span>$</span>
 					<input
 						type="number"
 						value={store.state.priceValue}

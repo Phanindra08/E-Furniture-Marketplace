@@ -10,7 +10,7 @@ const FeaturedItem = ({ item }) => {
 			<div className="sub-img">
 				<p className="sub-img__title">{item.title}</p>
 				<div className="sub-img__star">
-					<p>£{item.price}</p>
+					<p>${item.price}</p>
 				</div>
 				<Link to={`${PAGE_LINK.SHOP}/${item._id}`} state={{ item }}>
 					<button className="sub-img__btn">more details</button>

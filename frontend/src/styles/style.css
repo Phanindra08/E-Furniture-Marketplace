@@ -36,6 +36,7 @@ main {
 	grid-template-columns: repeat(3, 1fr);
 	grid-template-rows: repeat(2, 1fr);
 	gap: 4rem;
+	/* margin: 30px; */
 }
 
 .product {
